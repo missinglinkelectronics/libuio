@@ -1,5 +1,5 @@
-Name: libuio Uninstalled
-Description: UIO helper library, Not Installed
+Name: libUIO Uninstalled
+Description: UserspaceIO helper library, Not Installed
 Version: @VERSION@
-Libs: ${pcfiledir}/src/libuio.la
+Libs: ${pcfiledir}/src/libUIO.la
 Cflags: -I${pcfiledir} -I${pcfiledir}/src
