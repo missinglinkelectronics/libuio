@@ -217,34 +217,26 @@ void uio_free_info(struct uio_info_t* info)
 	}
 }
 
-int uio_num_from_filename(char* name)
+static int uio_num_from_filename(const char *name)
 {
-	enum scan_states { ss_u, ss_i, ss_o, ss_num, ss_err };
-	enum scan_states state = ss_u;
-	int i=0, num = -1;
-	char ch = name[0];
-	while (ch && (state != ss_err)) {
-		switch (ch) {
-			case 'u': if (state == ss_u) state = ss_i;
-				  else state = ss_err;
-				  break;
-			case 'i': if (state == ss_i) state = ss_o;
-				  else state = ss_err;
-				  break;
-			case 'o': if (state == ss_o) state = ss_num;
-				  else state = ss_err;
-				  break;
-			default:  if (  (ch>='0') && (ch<='9')
-				      &&(state == ss_num) ) {
-					if (num < 0) num = (ch - '0');
-					else num = (num * 10) + (ch - '0');
-				  }
-				  else state = ss_err;
-		}
-		i++;
-		ch = name[i];
-	}
-	if (state == ss_err) num = -1;
+	char *p;
+	char *endp;
+	int len;
+	int num;
+
+	p = strstr(name, "uio");
+	if (!p)
+		return -1;
+
+	len = strlen(p);
+	if (len < 4)
+		return -1;
+
+	p += 3;
+	num = strtoul(p, &endp, 10);
+
+	if (*endp != '\0')
+		return -1;
 	return num;
 }
 
