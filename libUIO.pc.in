@@ -7,4 +7,4 @@ Name: libUIO
 Description: UserspaceIO helper library
 Version: @VERSION@
 Libs: -L${libdir} -lUIO
-Cflags:
+Cflags: -I${includedir}
