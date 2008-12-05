@@ -41,8 +41,8 @@ int uio_get_mem_size(struct uio_info_t* info, int map_num)
 	FILE* file;
 
 	info->maps[map_num].size = UIO_INVALID_SIZE;
-	sprintf(filename, "/sys/class/uio/uio%d/maps/map%d/size",
-		info->uio_num, map_num);
+	snprintf(filename, sizeof(filename),
+		"/sys/class/uio/uio%d/maps/map%d/size", info->uio_num, map_num);
 	file = fopen(filename,"r");
 	if (!file)
 		return -1;
@@ -61,8 +61,8 @@ int uio_get_mem_addr(struct uio_info_t* info, int map_num)
 	FILE* file;
 
 	info->maps[map_num].addr = UIO_INVALID_ADDR;
-	sprintf(filename, "/sys/class/uio/uio%d/maps/map%d/addr",
-		info->uio_num, map_num);
+	snprintf(filename, sizeof(filename),
+		"/sys/class/uio/uio%d/maps/map%d/addr", info->uio_num, map_num);
 
 	file = fopen(filename,"r");
 	if (!file)
@@ -79,8 +79,10 @@ int uio_get_event_count(struct uio_info_t* info)
 	int ret;
 	char filename[64];
 	FILE* file;
+
 	info->event_count = 0;
-	sprintf(filename, "/sys/class/uio/uio%d/event", info->uio_num);
+	snprintf(filename, sizeof(filename), "/sys/class/uio/uio%d/event",
+			info->uio_num);
 	file = fopen(filename,"r");
 	if (!file)
 		return -1;
@@ -112,16 +114,16 @@ int line_from_file(char *filename, char *linebuf)
 int uio_get_name(struct uio_info_t* info)
 {
 	char filename[64];
-	sprintf(filename, "/sys/class/uio/uio%d/name", info->uio_num);
-
+	snprintf(filename, sizeof(filename), "/sys/class/uio/uio%d/name",
+			info->uio_num);
 	return line_from_file(filename, info->name);
 }
 
 int uio_get_version(struct uio_info_t* info)
 {
 	char filename[64];
-	sprintf(filename, "/sys/class/uio/uio%d/version", info->uio_num);
-
+	snprintf(filename, sizeof(filename), "/sys/class/uio/uio%d/version",
+			info->uio_num);
 	return line_from_file(filename, info->version);
 }
 
@@ -161,14 +163,16 @@ int uio_get_device_attributes(struct uio_info_t* info)
 	int n;
 
 	info->dev_attrs = NULL;
-	sprintf(fullname, "/sys/class/uio/uio%d/device", info->uio_num);
+	snprintf(fullname, sizeof(fullname), "/sys/class/uio/uio%d/device",
+			info->uio_num);
 	n = scandir(fullname, &namelist, 0, alphasort);
 	if (n < 0)
 		return -1;
 
 	while(n--) {
-		sprintf(fullname, "/sys/class/uio/uio%d/device/%s",
-			info->uio_num, namelist[n]->d_name);
+		snprintf(fullname, sizeof(fullname),
+			"/sys/class/uio/uio%d/device/%s", info->uio_num,
+			namelist[n]->d_name);
 		if (!dev_attr_filter(fullname))
 			continue;
 		attr = malloc(sizeof(struct uio_dev_attr_t));
@@ -326,7 +330,7 @@ int uio_open_device(struct uio_info_t* info)
 	char dev_name[16];
 	int fd;
 
-	sprintf(dev_name,"/dev/uio%d",info->uio_num);
+	snprintf(dev_name, sizeof(dev_name), "/dev/uio%d", info->uio_num);
 	fd = open(dev_name,O_RDWR);
 
 	return fd;
@@ -341,7 +345,7 @@ void *uio_mmap(struct uio_info_t* info, int map_num)
 	if (info->maps[map_num].size <= 0)
 		return MAP_FAILED;
 
-	sprintf(dev_name,"/dev/uio%d",info->uio_num);
+	snprintf(dev_name, sizeof(dev_name), "/dev/uio%d", info->uio_num);
 
 	fd = open(dev_name,O_RDWR);
 	if (fd < 0)
