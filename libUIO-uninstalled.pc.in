@@ -1,0 +1,5 @@
+Name: libuio Uninstalled
+Description: UIO helper library, Not Installed
+Version: @VERSION@
+Libs: ${pcfiledir}/src/libuio.la
+Cflags: -I${pcfiledir} -I${pcfiledir}/src
