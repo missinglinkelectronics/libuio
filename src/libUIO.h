@@ -61,6 +61,7 @@ int uio_open_device(struct uio_info_t* info);
 void uio_free_dev_attrs(struct uio_info_t* info);
 void uio_free_info(struct uio_info_t* info);
 struct uio_info_t* uio_find_devices(int filter_num);
+struct uio_info_t* uio_find_devices_by_devname(const char *name);
 struct uio_info_t* uio_find_devices_by_name(const char *name);
 
 void *uio_mmap(struct uio_info_t* info, int map_num);

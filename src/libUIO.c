@@ -370,3 +370,101 @@ void uio_munmap(void *p, size_t size)
 {
 	munmap(p, size);
 }
+
+static dev_t uio_get_dev_num(const char *name)
+{
+	struct stat buf;
+	int ret;
+
+	ret = stat(name, &buf);
+	if (ret)
+		goto out;
+
+	if ((buf.st_mode & S_IFMT) != S_IFCHR)
+	{
+		printf("%s is no char device\n", name);
+		goto out;
+	}
+
+	return buf.st_rdev;
+out:
+	return makedev(0,0);
+}
+
+static dev_t uio_dev_from_uevent(const char *name)
+{
+	char *pos, line [2048];
+	int maj = 0, min = 0;
+	FILE *f;
+
+	f = fopen(name, "r");
+	if (!f)
+		goto out;
+
+	while(fgets(line, sizeof(line), f))
+	{
+		pos = strchr(line, '\n');
+		if (pos == NULL)
+			continue;
+		pos[0] = '\0';
+
+		if (strncmp(line, "MAJOR=", 6) == 0)
+			maj = strtoull(&line[6], NULL, 10);
+		else if (strncmp (line, "MINOR=", 6) == 0)
+			min = strtoull(&line[6], NULL, 10);
+	}
+
+	fclose(f);
+out:
+	return makedev(maj, min);
+}
+
+struct uio_info_t* uio_find_devices_by_devname(const char *name)
+{
+	struct uio_info_t *infop = NULL;
+	struct dirent **namelist;
+	char uevent[PATH_MAX];
+	dev_t dev, dev1;
+	int num, n, i;
+
+	if (!name)
+		return NULL;
+
+	dev = uio_get_dev_num(name);
+	if (dev == makedev(0,0))
+		return NULL;
+
+	n = scandir("/sys/class/uio", &namelist, 0, alphasort);
+	if (n < 0)
+		return NULL;
+
+	while(n--) {
+		snprintf(uevent, sizeof(uevent),
+			 "/sys/class/uio/%s/uevent", namelist[n]->d_name);
+		num = uio_num_from_filename(namelist[n]->d_name);
+		free(namelist[n]);
+		if (infop)
+			continue;
+
+		dev1 = uio_dev_from_uevent(uevent);
+		if (dev == dev1) {
+			infop = calloc(1, sizeof(struct uio_info_t));
+			if (!infop)
+				continue;
+			infop->uio_num = num;
+
+			if (!infop)
+				continue;
+			if (uio_get_name(infop))
+				continue;
+			for (i = 0; i < MAX_UIO_MAPS; i++) {
+				uio_get_mem_size(infop, i);
+				uio_get_mem_addr(infop, i);
+			}
+			uio_get_event_count(infop);
+		}
+	}
+	free(namelist);
+
+	return infop;
+}
