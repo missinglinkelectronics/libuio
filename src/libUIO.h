@@ -67,4 +67,5 @@ struct uio_info_t* uio_find_devices_by_name(const char *name);
 void *uio_mmap(struct uio_info_t* info, int map_num);
 void uio_munmap(void *p, size_t size);
 
+void uio_setsysfs_point(const char *sysfs_mpoint);
 #endif

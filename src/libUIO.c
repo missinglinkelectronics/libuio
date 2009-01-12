@@ -34,6 +34,13 @@
 
 #include "libUIO.h"
 
+static const char *sysfs = "/sys";
+
+void uio_setsysfs_point(const char *sysfs_mpoint)
+{
+	sysfs = sysfs_mpoint;
+}
+
 int uio_get_mem_size(struct uio_info_t* info, int map_num)
 {
 	int ret;
@@ -42,7 +49,8 @@ int uio_get_mem_size(struct uio_info_t* info, int map_num)
 
 	info->maps[map_num].size = UIO_INVALID_SIZE;
 	snprintf(filename, sizeof(filename),
-		"/sys/class/uio/uio%d/maps/map%d/size", info->uio_num, map_num);
+		"%s/class/uio/uio%d/maps/map%d/size", sysfs, info->uio_num,
+		map_num);
 	file = fopen(filename,"r");
 	if (!file)
 		return -1;
@@ -62,8 +70,8 @@ int uio_get_mem_addr(struct uio_info_t* info, int map_num)
 
 	info->maps[map_num].addr = UIO_INVALID_ADDR;
 	snprintf(filename, sizeof(filename),
-		"/sys/class/uio/uio%d/maps/map%d/addr", info->uio_num, map_num);
-
+		"%s/class/uio/uio%d/maps/map%d/addr", sysfs, info->uio_num,
+		map_num);
 	file = fopen(filename,"r");
 	if (!file)
 		return -1;
@@ -81,7 +89,7 @@ int uio_get_event_count(struct uio_info_t* info)
 	FILE* file;
 
 	info->event_count = 0;
-	snprintf(filename, sizeof(filename), "/sys/class/uio/uio%d/event",
+	snprintf(filename, sizeof(filename), "%s/class/uio/uio%d/event", sysfs,
 			info->uio_num);
 	file = fopen(filename,"r");
 	if (!file)
@@ -114,7 +122,7 @@ int line_from_file(char *filename, char *linebuf)
 int uio_get_name(struct uio_info_t* info)
 {
 	char filename[64];
-	snprintf(filename, sizeof(filename), "/sys/class/uio/uio%d/name",
+	snprintf(filename, sizeof(filename), "%s/class/uio/uio%d/name", sysfs,
 			info->uio_num);
 	return line_from_file(filename, info->name);
 }
@@ -122,8 +130,8 @@ int uio_get_name(struct uio_info_t* info)
 int uio_get_version(struct uio_info_t* info)
 {
 	char filename[64];
-	snprintf(filename, sizeof(filename), "/sys/class/uio/uio%d/version",
-			info->uio_num);
+	snprintf(filename, sizeof(filename), "%s/class/uio/uio%d/version",
+			sysfs, info->uio_num);
 	return line_from_file(filename, info->version);
 }
 
@@ -163,7 +171,7 @@ int uio_get_device_attributes(struct uio_info_t* info)
 	int n;
 
 	info->dev_attrs = NULL;
-	snprintf(fullname, sizeof(fullname), "/sys/class/uio/uio%d/device",
+	snprintf(fullname, sizeof(fullname), "%s/class/uio/uio%d/device", sysfs,
 			info->uio_num);
 	n = scandir(fullname, &namelist, 0, alphasort);
 	if (n < 0)
@@ -171,7 +179,7 @@ int uio_get_device_attributes(struct uio_info_t* info)
 
 	while(n--) {
 		snprintf(fullname, sizeof(fullname),
-			"/sys/class/uio/uio%d/device/%s", info->uio_num,
+			"%s/class/uio/uio%d/device/%s", sysfs, info->uio_num,
 			namelist[n]->d_name);
 		if (!dev_attr_filter(fullname))
 			continue;
@@ -265,9 +273,11 @@ struct uio_info_t* uio_find_devices(int filter_num)
 {
 	struct dirent **namelist;
 	struct uio_info_t *infolist = NULL, *infp, *last = NULL;
+	char sysfsname[64];
 	int n;
 
-	n = scandir("/sys/class/uio", &namelist, 0, alphasort);
+	snprintf(sysfsname, sizeof(sysfsname), "%s/class/uio", sysfs);
+	n = scandir(sysfsname, &namelist, 0, alphasort);
 	if (n < 0)
 		return NULL;
 
@@ -291,12 +301,14 @@ struct uio_info_t* uio_find_devices_by_name(const char *name)
 {
 	struct dirent **namelist;
 	struct uio_info_t *infolist = NULL, *infp, *last = NULL;
+	char sysfsname[64];
 	int n, i;
 
 	if (!name)
 		return NULL;
 
-	n = scandir("/sys/class/uio", &namelist, 0, alphasort);
+	snprintf(sysfsname, sizeof(sysfsname), "%s/class/uio", sysfs);
+	n = scandir(sysfsname, &namelist, 0, alphasort);
 	if (n < 0)
 		return NULL;
 
@@ -420,6 +432,7 @@ struct uio_info_t* uio_find_devices_by_devname(const char *name)
 	struct uio_info_t *infop = NULL;
 	struct dirent **namelist;
 	char uevent[PATH_MAX];
+	char sysfsname[64];
 	dev_t dev, dev1;
 	int num, n, i;
 
@@ -430,13 +443,14 @@ struct uio_info_t* uio_find_devices_by_devname(const char *name)
 	if (dev == makedev(0,0))
 		return NULL;
 
-	n = scandir("/sys/class/uio", &namelist, 0, alphasort);
+	snprintf(sysfsname, sizeof(sysfsname), "%s/class/uio", sysfs);
+	n = scandir(sysfsname, &namelist, 0, alphasort);
 	if (n < 0)
 		return NULL;
 
 	while(n--) {
 		snprintf(uevent, sizeof(uevent),
-			 "/sys/class/uio/%s/uevent", namelist[n]->d_name);
+			 "%s/class/uio/%s/uevent", sysfs, namelist[n]->d_name);
 		num = uio_num_from_filename(namelist[n]->d_name);
 		free(namelist[n]);
 		if (infop)
