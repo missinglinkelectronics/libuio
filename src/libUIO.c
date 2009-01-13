@@ -353,6 +353,7 @@ void *uio_mmap(struct uio_info_t* info, int map_num)
 	char dev_name[16];
 	int fd;
 	void* map_addr;
+	int64_t offset;
 
 	if (info->maps[map_num].size <= 0)
 		return MAP_FAILED;
@@ -367,6 +368,9 @@ void *uio_mmap(struct uio_info_t* info, int map_num)
 			       PROT_READ|PROT_WRITE, MAP_SHARED|MAP_LOCKED|MAP_POPULATE, fd,
 			       map_num * getpagesize());
 
+	/* fixup map_addr, cause mmap only maps hole pages */
+	offset = ((int64_t) info->maps[map_num].addr & (getpagesize() - 1));
+	map_addr = map_addr + offset;
 #if 0
 	printf("errno: %d %s\n", errno, strerror(errno));
 #endif
