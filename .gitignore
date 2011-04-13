@@ -1,25 +1,41 @@
+#
+# Normal rules
+#
+.*
+
+#
+# git files that we don't want to ignore even it they are dot-files
+#
+!.gitignore
+!.mailmap
+
+#
+# gnu global files
+#
+GPATH
+GRTAGS
+GSYMS
+GTAGS
+
+*.orig
 *~
-.deps/
-autom4te.cache
-aclocal.m4
+\#*#
+
+#
+# autotools generated files and directories
+#
 ChangeLog
+INSTALL
+Makefile.in
+aclocal.m4
+autom4te.cache/
 compile
 config.guess
-config.h
 config.h.in
-config.log
-config.status
 config.sub
 configure
 depcomp
-INSTALL
 install-sh
-libtool
-libUIO.pc
-libUIO-uninstalled.pc
 ltmain.sh
-m4
-Makefile
-Makefile.in
+m4/
 missing
-stamp-h1

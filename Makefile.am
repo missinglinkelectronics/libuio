@@ -18,3 +18,6 @@ ACLOCAL_AMFLAGS = -I m4
 
 dist-hook:
 	$(top_srcdir)/ChangeLog-from-git $(top_srcdir)
+
+doc: libUIO.dox $(libUIO_la_SOURCES)
+	doxygen libUIO.dox

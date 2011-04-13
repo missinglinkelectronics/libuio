@@ -37,5 +37,6 @@ AC_SUBST(CIF_WERROR)
 
 dnl last but not least
 AC_OUTPUT([Makefile
+	libUIO.dox
 	libUIO-uninstalled.pc
 	libUIO.pc])
