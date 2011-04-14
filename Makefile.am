@@ -1,8 +1,13 @@
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libUIO.pc
 
+bin_PROGRAMS = lsuio
+lsuio_SOURCES = lsuio.c
+lsuio_CFLAGS = -W -Wall
+lsuio_LDADD = libUIO.la
+
 lib_LTLIBRARIES = libUIO.la
-libUIO_la_SOURCES = libUIO.c libUIO.h
+libUIO_la_SOURCES = helper.c handling.c libUIO.h
 libUIO_la_CFLAGS = -O2 -Wall -Wextra $(LIBUIO_WERROR)
 include_HEADERS = libUIO.h
 
@@ -15,7 +20,7 @@ include_HEADERS = libUIO.h
 # 4) If any interfaces have been removed or changed since the last public
 #    release, then set age to 0. 
 
-libUIO_la_LDFLAGS = -version-info 0:0:0
+libUIO_la_LDFLAGS = -version-info 1:0:0
 
 EXTRA_DIST = libUIO.pc.in libUIO-uninstalled.pc.in ChangeLog-from-git
 

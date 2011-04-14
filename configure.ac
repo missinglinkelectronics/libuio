@@ -1,5 +1,5 @@
 dnl Every other copy of the package version number gets its value from here
-AC_INIT(libuio, 0.2, john.ogness@linutronix.de)
+AC_INIT(libuio, 0.1.90, b.spranger@linutronix.de)
 AM_INIT_AUTOMAKE
 
 AM_CONFIG_HEADER(config.h)
@@ -22,6 +22,7 @@ AC_PROG_LIBTOOL
 dnl Checks for libraries.
 
 dnl Checks for header files.
+AC_CHECK_HEADER(argp.h,,AC_MSG_ERROR(Cannot continue: argp.h not found))
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 
@@ -29,11 +30,12 @@ dnl Checks for library functions.
 
 dnl with or without -Werror
 AC_ARG_WITH([werror],
-            [AS_HELP_STRING([--with-werror],
-            [compile with -Werror @<:@default=without@:>@])],
-            [LIBUIO_WERROR="-Werror"],
-            [LIBUIO_WERROR=""])
-AC_SUBST(CIF_WERROR)
+            [AS_HELP_STRING([--without-werror],
+            [compile with -Werror @<:@default=with@:>@])],
+            [LIBUIO_WERROR=""],
+            [LIBUIO_WERROR="-Werror"])
+
+AC_SUBST(LIBUIO_WERROR)
 
 dnl last but not least
 AC_OUTPUT([Makefile

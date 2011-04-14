@@ -2,7 +2,8 @@
 
 
 
-  Copyright (C) 2008 Hans J. Koch
+  Copyright (C) 2011 Benedikt Spranger
+  based on libUIO by Hans J. Koch
 
   libUIO is free software; you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License version 2.1
@@ -19,4 +20,4 @@
 
 Comments are welcome.
 
-	- Hans J. Koch <hjk@hansjkoch.de>
+	- Benedikt Spranger <b.spranger@linutronix.de>

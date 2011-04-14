@@ -1,7 +1,8 @@
 /*
  * libUIO - UserspaceIO helper library
  *
- * Copyright (C) 2008 Hans J. Koch
+ * Copyright (C) 2011 Benedikt Spranger
+ * based on libUIO by Hans J. Koch
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,51 +22,30 @@
 #ifndef _LIBUIO_H_
 #define _LIBUIO_H_
 
-#define UIO_MAX_NAME_SIZE	64
-#define UIO_MAX_NUM		255
-
-#define UIO_INVALID_SIZE	-1
-#define UIO_INVALID_ADDR	(~0)
-
-#define MAX_UIO_MAPS	5
-
 struct uio_map_t {
 	unsigned long addr;
 	size_t size;
-};
-
-struct uio_dev_attr_t {
-	char name[UIO_MAX_NAME_SIZE];
-	char value[UIO_MAX_NAME_SIZE];
-	struct uio_dev_attr_t *next;
+	size_t offset;
+	void *map;
 };
 
 struct uio_info_t {
-	int uio_num;
-	struct uio_map_t maps[MAX_UIO_MAPS];
-	int event_count;
-	char name[ UIO_MAX_NAME_SIZE ];
-	char version[ UIO_MAX_NAME_SIZE ];
-	struct uio_dev_attr_t *dev_attrs;
-	struct uio_info_t* next;
+	char *name;
+	char *version;
+	struct uio_map_t *maps;
+	char *devname;
+	dev_t devid;
+	int maxmap;
+	int fd;
 };
 
-int uio_get_mem_size(struct uio_info_t* info, int map_num);
-int uio_get_mem_addr(struct uio_info_t* info, int map_num);
-int uio_get_event_count(struct uio_info_t* info);
-int uio_get_name(struct uio_info_t* info);
-int uio_get_version(struct uio_info_t* info);
-int uio_get_all_info(struct uio_info_t* info);
-int uio_get_device_attributes(struct uio_info_t* info);
-int uio_open_device(struct uio_info_t* info);
-void uio_free_dev_attrs(struct uio_info_t* info);
-void uio_free_info(struct uio_info_t* info);
-struct uio_info_t* uio_find_devices(int filter_num);
-struct uio_info_t* uio_find_devices_by_devname(const char *name);
-struct uio_info_t* uio_find_devices_by_name(const char *name);
+struct uio_info_t **uio_find_devices ();
 
-void *uio_mmap(struct uio_info_t* info, int map_num);
-void uio_munmap(void *p, size_t size);
+void uio_setsysfs_point (const char *sysfs_mpoint);
+size_t uio_get_mem_size (struct uio_info_t* info, int map);
+unsigned long uio_get_mem_addr (struct uio_info_t* info, int map);
+size_t uio_get_offset (struct uio_info_t* info, int map);
+int uio_open (struct uio_info_t* info);
+int uio_close (struct uio_info_t* info);
 
-void uio_setsysfs_point(const char *sysfs_mpoint);
 #endif
