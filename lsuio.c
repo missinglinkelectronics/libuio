@@ -84,16 +84,16 @@ int main (int argc, char **argv)
 	for (;*uio_list; uio_list++)
 	{
 		info = *uio_list;
-		printf ("Name   : %s\n", info->name);
-		printf ("Version: %s\n", info->version);
-		printf ("DevId  : %d:%d\n",
-			major (info->devid), minor (info->devid));
-		printf ("DevNode: %s\n", info->devname);
+		printf ("Name   : %s\n", uio_get_name (info));
+		printf ("Version: %s\n", uio_get_version (info));
+		printf ("DevId  : %d:%d\n", uio_get_major (info),
+			uio_get_minor (info));
+		printf ("DevNode: %s\n", uio_get_devname (info));
 
 		if (want_verbose)
 		{
 			printf ("Map    :\n");
-			for (i = 0; i < info->maxmap; i++)
+			for (i = 0; i < uio_get_maxmap (info); i++)
 			{
 				printf ("%3d addr: 0x%08lx\n", i,
 					uio_get_mem_addr (info, i));
@@ -107,7 +107,7 @@ int main (int argc, char **argv)
 
 		if (want_access)
 		{
-			printf ("open: ");
+			printf ("open : ");
 			if (!uio_open (info))
 				printf ("OK\n");
 			else

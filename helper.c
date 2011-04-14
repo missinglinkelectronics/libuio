@@ -34,8 +34,6 @@
 
 #include "libUIO.h"
 
-#define BUF_SIZE	1024
-
 /**
  * @defgroup libUIO_helper generic libUIO helper functions
  * @ingroup libUIO
@@ -50,7 +48,7 @@
  */
 char *first_line_from_file (char *filename)
 {
-	char *out;
+	char c, *out;
 	int fd, len;
 
 	fd = open (filename, O_RDONLY);
@@ -60,7 +58,10 @@ char *first_line_from_file (char *filename)
 		return NULL;
 	}
 
-	out = malloc (BUF_SIZE);
+	for (len = 0; ((read (fd, &c, 1) == 1) && (c != '\n')); len++);
+	lseek (fd, 0, SEEK_SET);
+
+	out = malloc (len + 1);
 	if (!out)
 	{
 		errno = ENOMEM;
@@ -68,17 +69,15 @@ char *first_line_from_file (char *filename)
 		goto out;
 	}
 
-	len = read (fd, out, BUF_SIZE);
+	len = read (fd, out, len);
 	if (len < 0)
 	{
 		perror ("read");
 		free (out);
 		out = NULL;
 	}
-	else
-	{
-		out = realloc (out, len);
-	}
+
+	out [len] = 0;
 out:
 	close (fd);
 
@@ -209,8 +208,6 @@ static int search_major_minor (const char *dir, dev_t devid, char **devname)
 			  dir, namelist [i]->d_name);
 
 		ret = lstat (name, &stat);
-		if (ret > 0)
-			return 1;
 		if (ret < 0)
 		{
 			perror ("lstat");
@@ -220,7 +217,7 @@ static int search_major_minor (const char *dir, dev_t devid, char **devname)
 		if (S_ISDIR (stat.st_mode))
 		{
 			ret = search_major_minor (name, devid, devname);
-			if (ret < 0)
+			if (ret != 0)
 				goto out;
 		}
 

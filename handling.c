@@ -55,7 +55,7 @@ static const char *sysfs = "/sys";
  * Set sysfs mount point
  * @param sysfs_mpoint path to sysfs mount point
  */
-void uio_setsysfs_point(const char *sysfs_mpoint)
+void uio_setsysfs_point (const char *sysfs_mpoint)
 {
 	sysfs = sysfs_mpoint;
 }
@@ -99,16 +99,18 @@ unsigned long uio_get_mem_addr (struct uio_info_t* info, int map)
 	return info->maps [map].addr;
 }
 
-#if 0
 /**
- * get UIO device event count
+ * get memory map pointer
  * @param info UIO device info struct
+ * @param map_num memory bar number
  */
-int uio_get_event_count(struct uio_info_t* info)
+void *uio_get_mem_map (struct uio_info_t* info, int map)
 {
-	return 0;
+	if (!info || map >= info->maxmap || info->maps [map].map == MAP_FAILED)
+		return NULL;
+
+	return info->maps [map].map;
 }
-#endif
 
 /**
  * get UIO device name
@@ -123,6 +125,18 @@ char *uio_get_name(struct uio_info_t* info)
 }
 
 /**
+ * get UIO device node name
+ * @param info UIO device info struct
+ */
+char *uio_get_devname(struct uio_info_t* info)
+{
+	if (!info)
+		return NULL;
+
+	return info->devname;
+}
+
+/**
  * get UIO driver version
  * @param info UIO device info struct
  */
@@ -132,6 +146,54 @@ char *uio_get_version(struct uio_info_t* info)
 		return NULL;
 
 	return info->version;
+}
+
+/**
+ * get UIO device major number
+ * @param info UIO device info struct
+ */
+int uio_get_major(struct uio_info_t* info)
+{
+	if (!info)
+		return 0;
+
+	return major (info->devid);
+}
+
+/**
+ * get UIO device minor number
+ * @param info UIO device info struct
+ */
+int uio_get_minor(struct uio_info_t* info)
+{
+	if (!info)
+		return 0;
+
+	return minor (info->devid);
+}
+
+/**
+ * get UIO device id
+ * @param info UIO device info struct
+ */
+dev_t uio_get_devid(struct uio_info_t* info)
+{
+	if (!info)
+		return 0;
+
+	return info->devid;
+}
+
+/**
+ * get UIO device map count
+ * @param info UIO device info struct
+ */
+int uio_get_maxmap(struct uio_info_t* info)
+{
+	if (!info)
+		return 0;
+
+	return info->maxmap;
 }
 
 /**

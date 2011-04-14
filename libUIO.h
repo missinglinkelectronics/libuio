@@ -42,8 +42,16 @@ struct uio_info_t {
 struct uio_info_t **uio_find_devices ();
 
 void uio_setsysfs_point (const char *sysfs_mpoint);
+char *uio_get_name (struct uio_info_t* info);
+char *uio_get_version (struct uio_info_t* info);
+char *uio_get_devname (struct uio_info_t* info);
+int uio_get_major (struct uio_info_t* info);
+int uio_get_minor (struct uio_info_t* info);
+dev_t uio_get_devid (struct uio_info_t* info);
+int uio_get_maxmap (struct uio_info_t* info);
 size_t uio_get_mem_size (struct uio_info_t* info, int map);
 unsigned long uio_get_mem_addr (struct uio_info_t* info, int map);
+void *uio_get_mem_map (struct uio_info_t* info, int map);
 size_t uio_get_offset (struct uio_info_t* info, int map);
 int uio_open (struct uio_info_t* info);
 int uio_close (struct uio_info_t* info);
