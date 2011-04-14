@@ -56,4 +56,13 @@ size_t uio_get_offset (struct uio_info_t* info, int map);
 int uio_open (struct uio_info_t* info);
 int uio_close (struct uio_info_t* info);
 
+int uio_enable_irq (struct uio_info_t* info);
+int uio_disable_irq (struct uio_info_t* info);
+int uio_irqwait_timeout (struct uio_info_t* info, struct timeval *timeout);
+
+static inline int uio_irqwait (struct uio_info_t* info)
+{
+	return uio_irqwait_timeout (info, NULL);
+}
+
 #endif
