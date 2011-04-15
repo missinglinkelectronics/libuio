@@ -106,7 +106,8 @@ dev_t devid_from_file (char *filename)
 		devid = makedev (major, minor);
 
 out:
-	fclose (fhan);
+	if (fhan)
+		fclose (fhan);
 	return devid;
 }
 
@@ -127,7 +128,7 @@ static struct uio_map_t *scan_maps (char *dir, int *maxmap)
 	if (nr < 0)
 	{
 		perror ("scandir");
-		goto out;
+		return NULL;
 	}
 
 	map = calloc (nr, sizeof (struct uio_map_t));

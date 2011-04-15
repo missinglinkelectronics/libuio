@@ -40,6 +40,7 @@ struct uio_info_t {
 };
 
 struct uio_info_t **uio_find_devices ();
+struct uio_info_t *uio_find_by_uio_num (int num);
 
 void uio_setsysfs_point (const char *sysfs_mpoint);
 char *uio_get_name (struct uio_info_t* info);

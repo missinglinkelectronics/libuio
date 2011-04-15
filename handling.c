@@ -203,10 +203,14 @@ void uio_free_info(struct uio_info_t* info)
 {
 	if (info)
 	{
-		free (info->name);
-		free (info->version);
-		free (info->maps);
-		free (info->devname);
+		if (info->name)
+			free (info->name);
+		if (info->version)
+			free (info->version);
+		if (info->maps)
+			free (info->maps);
+		if (info->devname)
+			free (info->devname);
 		free (info);
 	}
 }
@@ -251,6 +255,29 @@ out:
 	for (i = 0; i < nr; i++)
 		free (namelist [i]);
 	free (namelist);
+
+	return info;
+}
+
+/**
+ * find UIO devices by UIO enumeration number
+ * @returns device info or NULL on failure
+ */
+struct uio_info_t *uio_find_by_uio_num (int num)
+{
+	struct uio_info_t *info;
+	char sysfsname [PATH_MAX];
+	char name [PATH_MAX];
+
+	snprintf (sysfsname, sizeof (sysfsname), "%s/class/uio", sysfs);
+	snprintf (name, sizeof (name), "uio%d", num);
+
+	info = create_uio_info (sysfsname, name);
+	if (errno)
+	{
+		uio_free_info (info);
+		info = NULL;
+	}
 
 	return info;
 }
