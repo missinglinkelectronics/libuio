@@ -19,8 +19,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
  */
 
-#ifndef _LIBUIO_H_
-#define _LIBUIO_H_
+#ifndef LIBUIO_H
+#define LIBUIO_H
+
+#include <stddef.h>
+
+#include <sys/time.h>
+#include <sys/types.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 struct uio_map_t {
 	unsigned long addr;
@@ -66,4 +75,8 @@ static inline int uio_irqwait (struct uio_info_t* info)
 	return uio_irqwait_timeout (info, NULL);
 }
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif /* LIBUIO_H */
