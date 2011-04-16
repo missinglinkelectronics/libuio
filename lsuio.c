@@ -61,7 +61,7 @@ void (*argp_program_version_hook) (FILE *, struct argp_state *) = show_version;
 
 static struct argp argp =
 {
-	options, parse_opt, N_("[...]"),
+	options, parse_opt, NULL,
 	N_("list uio devices."),
 	NULL, NULL, NULL
 };

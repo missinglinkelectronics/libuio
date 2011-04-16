@@ -34,19 +34,6 @@
 #include "libUIO_internal.h"
 
 /**
- * @mainpage
- *
- * This manual documents the libUIO C API.
- */
-
-/**
- * @defgroup libUIO_public public available libUIO functions
- * @ingroup libUIO
- * @brief public functions
- * @{
- */
-
-/**
  * @defgroup libUIO_irq libUIO irq functions
  * @ingroup libUIO_public
  * @brief public irq functions
@@ -55,7 +42,8 @@
 
 /**
  * enable UIO device interrupt
- * @param name UIO device name
+ * @param info UIO device info struct
+ * @returns 0 on success or -1 on failure and errno is set
  */
 int uio_enable_irq (struct uio_info_t* info)
 {
@@ -73,7 +61,8 @@ int uio_enable_irq (struct uio_info_t* info)
 
 /**
  * disable UIO device interrupt
- * @param name UIO device name
+ * @param info UIO device info struct
+ * @returns 0 on success or -1 on failure and errno is set
  */
 int uio_disable_irq (struct uio_info_t* info)
 {
@@ -93,7 +82,7 @@ int uio_disable_irq (struct uio_info_t* info)
  * wait for UIO device interrupt
  * @param info UIO device struct
  * @param timeout timeout or NULL to wait forever
- * @returns 0 success or -1 on failure
+ * @returns 0 on success or -1 on failure and errno is set
  */
 int uio_irqwait_timeout (struct uio_info_t* info, struct timeval *timeout)
 {

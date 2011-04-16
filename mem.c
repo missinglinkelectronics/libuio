@@ -45,57 +45,64 @@
  * get memory map size of UIO memory bar
  * @param info UIO device info struct
  * @param map_num memory bar number
+ * @return size of UIO memory bar or 0 on failure
  */
-size_t uio_get_mem_size (struct uio_info_t* info, int map)
+size_t uio_get_mem_size (struct uio_info_t* info, int map_num)
 {
-	if (!info || map >= info->maxmap)
+	if (!info || map_num >= info->maxmap)
 		return 0;
 
-	return info->maps [map].size;
+	return info->maps [map_num].size;
 }
 
 /**
  * get memory map offset of UIO memory bar
  * @param info UIO device info struct
  * @param map_num memory bar number
+ * @return size of UIO memory bar
  */
-size_t uio_get_offset (struct uio_info_t* info, int map)
+size_t uio_get_offset (struct uio_info_t* info, int map_num)
 {
-	if (!info || map >= info->maxmap)
+	if (!info || map_num >= info->maxmap)
 		return 0;
 
-	return info->maps [map].offset;
+	return info->maps [map_num].offset;
 }
 
 /**
  * get memory map physical address of UIO memory bar
  * @param info UIO device info struct
  * @param map_num memory bar number
+ * @return physical address of UIO memory bar or 0 on failure
  */
-unsigned long uio_get_mem_addr (struct uio_info_t* info, int map)
+unsigned long uio_get_mem_addr (struct uio_info_t* info, int map_num)
 {
-	if (!info || map >= info->maxmap)
+	if (!info || map_num >= info->maxmap)
 		return 0;
 
-	return info->maps [map].addr;
+	return info->maps [map_num].addr;
 }
 
 /**
  * get memory map pointer
  * @param info UIO device info struct
  * @param map_num memory bar number
+ * @return UIO memory bar maped pointer or NULL on failure
  */
-void *uio_get_mem_map (struct uio_info_t* info, int map)
+void *uio_get_mem_map (struct uio_info_t* info, int map_num)
 {
-	if (!info || map >= info->maxmap || info->maps [map].map == MAP_FAILED)
+	if (!info ||
+	    map_num >= info->maxmap ||
+	    info->maps [map_num].map == MAP_FAILED)
 		return NULL;
 
-	return info->maps [map].map;
+	return info->maps [map_num].map;
 }
 
 /**
  * get UIO device map count
  * @param info UIO device info struct
+ * @return number of UIO memory bars
  */
 int uio_get_maxmap(struct uio_info_t* info)
 {
@@ -110,8 +117,10 @@ int uio_get_maxmap(struct uio_info_t* info)
  * @param info UIO device info struct
  * @param map_num memory bar number
  * @param offset register offset
+ * @param val register value
+ * @return 0 on success or -1 on failure
  */
-int uio_read8 (struct uio_info_t* info, int map, unsigned long offset,
+int uio_read8 (struct uio_info_t* info, int map_num, unsigned long offset,
 	       uint8_t *val)
 {
 	void *ptr;
@@ -119,7 +128,7 @@ int uio_read8 (struct uio_info_t* info, int map, unsigned long offset,
 	if (!info || !val)
 		return -1;
 
-	ptr = info->maps [map].map + info->maps [map].offset + offset;
+	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
 
 	*val = *(volatile uint8_t *) ptr;
 
@@ -131,8 +140,10 @@ int uio_read8 (struct uio_info_t* info, int map, unsigned long offset,
  * @param info UIO device info struct
  * @param map_num memory bar number
  * @param offset register offset
+ * @param val register value
+ * @return 0 on success or -1 on failure
  */
-int uio_read16 (struct uio_info_t* info, int map, unsigned long offset,
+int uio_read16 (struct uio_info_t* info, int map_num, unsigned long offset,
 	       uint16_t *val)
 {
 	void *ptr;
@@ -140,7 +151,7 @@ int uio_read16 (struct uio_info_t* info, int map, unsigned long offset,
 	if (!info || !val)
 		return -1;
 
-	ptr = info->maps [map].map + info->maps [map].offset + offset;
+	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
 
 	*val = *(volatile uint16_t *) ptr;
 
@@ -152,8 +163,10 @@ int uio_read16 (struct uio_info_t* info, int map, unsigned long offset,
  * @param info UIO device info struct
  * @param map_num memory bar number
  * @param offset register offset
+ * @param val register value
+ * @return 0 on success or -1 on failure
  */
-int uio_read32 (struct uio_info_t* info, int map, unsigned long offset,
+int uio_read32 (struct uio_info_t* info, int map_num, unsigned long offset,
 	       uint32_t *val)
 {
 	void *ptr;
@@ -161,7 +174,7 @@ int uio_read32 (struct uio_info_t* info, int map, unsigned long offset,
 	if (!info || !val)
 		return -1;
 
-	ptr = info->maps [map].map + info->maps [map].offset + offset;
+	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
 
 	*val = *(volatile uint32_t *) ptr;
 
@@ -173,8 +186,10 @@ int uio_read32 (struct uio_info_t* info, int map, unsigned long offset,
  * @param info UIO device info struct
  * @param map_num memory bar number
  * @param offset register offset
+ * @param val register value
+ * @return 0 on success or -1 on failure
  */
-int uio_write8 (struct uio_info_t* info, int map, unsigned long offset,
+int uio_write8 (struct uio_info_t* info, int map_num, unsigned long offset,
 	       uint8_t val)
 {
 	void *ptr;
@@ -182,7 +197,7 @@ int uio_write8 (struct uio_info_t* info, int map, unsigned long offset,
 	if (!info || !val)
 		return -1;
 
-	ptr = info->maps [map].map + info->maps [map].offset + offset;
+	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
 
 	*(volatile uint8_t *) ptr = val;
 
@@ -194,8 +209,10 @@ int uio_write8 (struct uio_info_t* info, int map, unsigned long offset,
  * @param info UIO device info struct
  * @param map_num memory bar number
  * @param offset register offset
+ * @param val register value
+ * @return 0 on success or -1 on failure
  */
-int uio_write16 (struct uio_info_t* info, int map, unsigned long offset,
+int uio_write16 (struct uio_info_t* info, int map_num, unsigned long offset,
 	       uint16_t val)
 {
 	void *ptr;
@@ -203,7 +220,7 @@ int uio_write16 (struct uio_info_t* info, int map, unsigned long offset,
 	if (!info || !val)
 		return -1;
 
-	ptr = info->maps [map].map + info->maps [map].offset + offset;
+	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
 
 	*(volatile uint16_t *) ptr = val;
 
@@ -215,8 +232,10 @@ int uio_write16 (struct uio_info_t* info, int map, unsigned long offset,
  * @param info UIO device info struct
  * @param map_num memory bar number
  * @param offset register offset
+ * @param val register value
+ * @return 0 on success or -1 on failure
  */
-int uio_write32 (struct uio_info_t* info, int map, unsigned long offset,
+int uio_write32 (struct uio_info_t* info, int map_num, unsigned long offset,
 	       uint32_t val)
 {
 	void *ptr;
@@ -224,7 +243,7 @@ int uio_write32 (struct uio_info_t* info, int map, unsigned long offset,
 	if (!info || !val)
 		return -1;
 
-	ptr = info->maps [map].map + info->maps [map].offset + offset;
+	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
 
 	*(volatile uint32_t *) ptr = val;
 

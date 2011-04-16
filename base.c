@@ -43,7 +43,6 @@
  * @defgroup libUIO_public public available libUIO functions
  * @ingroup libUIO
  * @brief public functions
- * @{
  */
 
 /**
@@ -67,6 +66,7 @@ void uio_setsysfs_point (const char *sysfs_mpoint)
 /**
  * get UIO device name
  * @param info UIO device info struct
+ * @returns UIO device name or NULL on failure
  */
 char *uio_get_name(struct uio_info_t* info)
 {
@@ -79,6 +79,7 @@ char *uio_get_name(struct uio_info_t* info)
 /**
  * get UIO device node name
  * @param info UIO device info struct
+ * @returns UIO device node name or NULL on failure
  */
 char *uio_get_devname(struct uio_info_t* info)
 {
@@ -91,6 +92,7 @@ char *uio_get_devname(struct uio_info_t* info)
 /**
  * get UIO driver version
  * @param info UIO device info struct
+ * @returns UIO device version or NULL on failure
  */
 char *uio_get_version(struct uio_info_t* info)
 {
@@ -103,6 +105,7 @@ char *uio_get_version(struct uio_info_t* info)
 /**
  * get UIO device major number
  * @param info UIO device info struct
+ * @returns UIO device node major or 0 on failure
  */
 int uio_get_major(struct uio_info_t* info)
 {
@@ -115,6 +118,7 @@ int uio_get_major(struct uio_info_t* info)
 /**
  * get UIO device minor number
  * @param info UIO device info struct
+ * @returns UIO device node minor or 0 on failure
  */
 int uio_get_minor(struct uio_info_t* info)
 {
@@ -127,6 +131,7 @@ int uio_get_minor(struct uio_info_t* info)
 /**
  * get UIO device id
  * @param info UIO device info struct
+ * @returns UIO device id or 0 on failure
  */
 dev_t uio_get_devid(struct uio_info_t* info)
 {
@@ -202,16 +207,17 @@ out:
 
 /**
  * find UIO devices by UIO enumeration number
+ * @param uio_num UIO enumeration number
  * @returns device info or NULL on failure
  */
-struct uio_info_t *uio_find_by_uio_num (int num)
+struct uio_info_t *uio_find_by_uio_num (int uio_num)
 {
 	struct uio_info_t *info;
 	char sysfsname [PATH_MAX];
 	char name [PATH_MAX];
 
 	snprintf (sysfsname, sizeof (sysfsname), "%s/class/uio", sysfs);
-	snprintf (name, sizeof (name), "uio%d", num);
+	snprintf (name, sizeof (name), "uio%d", uio_num);
 
 	info = create_uio_info (sysfsname, name);
 	if (errno)
@@ -225,7 +231,8 @@ struct uio_info_t *uio_find_by_uio_num (int num)
 
 /**
  * open a UIO device
- * @param name UIO device name
+ * @param info UIO device info stuct
+ * @returns 0 on success or -1 on failure and errno is set
  */
 int uio_open (struct uio_info_t* info)
 {
@@ -256,7 +263,8 @@ int uio_open (struct uio_info_t* info)
 
 /**
  * close a UIO device
- * @param name UIO device name
+ * @param info UIO device info struct
+ * @returns 0 on success or -1 on failure and errno is set
  */
 int uio_close (struct uio_info_t* info)
 {

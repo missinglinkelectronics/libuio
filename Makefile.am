@@ -2,7 +2,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libUIO.pc
 
 bin_PROGRAMS = lsuio
-lsuio_SOURCES = lsuio.c
+lsuio_SOURCES = lsuio.c lsuio.1
 lsuio_CFLAGS = -W -Wall
 lsuio_LDADD = libUIO.la
 
@@ -22,13 +22,19 @@ include_HEADERS = libUIO.h
 
 libUIO_la_LDFLAGS = -version-info 1:0:0
 
-EXTRA_DIST = libUIO.pc.in libUIO-uninstalled.pc.in ChangeLog-from-git
+EXTRA_DIST = libUIO.pc.in libUIO-uninstalled.pc.in ChangeLog-from-git \
+	lsuio.texinfo
+
+info_TEXINFOS = lsuio.texinfo
+lsuio_TEXINFOS = lgpl21.texinfo
+
+man_MANS = lsuio.1
 
 DISTCLEANFILES = *~
 
 MAINTAINERCLEANFILES = aclocal.m4 compile config.guess config.h.in \
 	config.sub configure depcomp INSTALL install-sh ltmain.sh m4/* \
-	Makefile.in missing
+	Makefile.in missing texinfo.tex ChangeLog
 
 ACLOCAL_AMFLAGS = -I m4
 

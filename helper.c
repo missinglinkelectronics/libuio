@@ -114,6 +114,7 @@ out:
 /**
  * read a line from a file
  * @param dir map directory
+ * @param maxmap available maps
  * @returns maps or NULL on failure
  */
 static struct uio_map_t *scan_maps (char *dir, int *maxmap)
@@ -247,7 +248,12 @@ out:
 	return ret;
 }
 
-
+/**
+ * create UIO device info struct
+ * @param dir sysfs directory
+ * @param name uio device entry
+ * @returns UIO device info struct or NULL on failure
+ */
 struct uio_info_t *create_uio_info (char *dir, char *name)
 {
 	struct uio_info_t *info;
