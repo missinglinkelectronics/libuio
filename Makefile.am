@@ -7,7 +7,7 @@ lsuio_CFLAGS = -W -Wall
 lsuio_LDADD = libUIO.la
 
 lib_LTLIBRARIES = libUIO.la
-libUIO_la_SOURCES = helper.c handling.c libUIO.h
+libUIO_la_SOURCES = base.c helper.c irq.c mem.c libUIO.h libUIO_internal.h
 libUIO_la_CFLAGS = -O2 -Wall -Wextra $(LIBUIO_WERROR)
 include_HEADERS = libUIO.h
 

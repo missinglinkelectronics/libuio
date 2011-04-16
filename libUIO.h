@@ -31,22 +31,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-struct uio_map_t {
-	unsigned long addr;
-	size_t size;
-	size_t offset;
-	void *map;
-};
-
-struct uio_info_t {
-	char *name;
-	char *version;
-	struct uio_map_t *maps;
-	char *devname;
-	dev_t devid;
-	int maxmap;
-	int fd;
-};
+struct uio_info_t;
 
 struct uio_info_t **uio_find_devices ();
 struct uio_info_t *uio_find_by_uio_num (int num);

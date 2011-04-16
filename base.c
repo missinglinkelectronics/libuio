@@ -31,9 +31,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "libUIO.h"
-
-struct uio_info_t* create_uio_info (char *dir, char* name);
+#include "libUIO_internal.h"
 
 /**
  * @mainpage
@@ -48,6 +46,13 @@ struct uio_info_t* create_uio_info (char *dir, char* name);
  * @{
  */
 
+/**
+ * @defgroup libUIO_base libUIO base functions
+ * @ingroup libUIO_public
+ * @brief public base functions
+ * @{
+ */
+
 static const char *sysfs = "/sys";
 
 /**
@@ -57,58 +62,6 @@ static const char *sysfs = "/sys";
 void uio_setsysfs_point (const char *sysfs_mpoint)
 {
 	sysfs = sysfs_mpoint;
-}
-
-/**
- * get memory map size of UIO memory bar
- * @param info UIO device info struct
- * @param map_num memory bar number
- */
-size_t uio_get_mem_size (struct uio_info_t* info, int map)
-{
-	if (!info || map >= info->maxmap)
-		return 0;
-
-	return info->maps [map].size;
-}
-
-/**
- * get memory map offset of UIO memory bar
- * @param info UIO device info struct
- * @param map_num memory bar number
- */
-size_t uio_get_offset (struct uio_info_t* info, int map)
-{
-	if (!info || map >= info->maxmap)
-		return 0;
-
-	return info->maps [map].offset;
-}
-
-/**
- * get memory map physical address of UIO memory bar
- * @param info UIO device info struct
- * @param map_num memory bar number
- */
-unsigned long uio_get_mem_addr (struct uio_info_t* info, int map)
-{
-	if (!info || map >= info->maxmap)
-		return 0;
-
-	return info->maps [map].addr;
-}
-
-/**
- * get memory map pointer
- * @param info UIO device info struct
- * @param map_num memory bar number
- */
-void *uio_get_mem_map (struct uio_info_t* info, int map)
-{
-	if (!info || map >= info->maxmap || info->maps [map].map == MAP_FAILED)
-		return NULL;
-
-	return info->maps [map].map;
 }
 
 /**
@@ -181,18 +134,6 @@ dev_t uio_get_devid(struct uio_info_t* info)
 		return 0;
 
 	return info->devid;
-}
-
-/**
- * get UIO device map count
- * @param info UIO device info struct
- */
-int uio_get_maxmap(struct uio_info_t* info)
-{
-	if (!info)
-		return 0;
-
-	return info->maxmap;
 }
 
 /**
@@ -338,81 +279,6 @@ int uio_close (struct uio_info_t* info)
 	close (info->fd);
 
 	return 0;
-}
-
-/**
- * enable UIO device interrupt
- * @param name UIO device name
- */
-int uio_enable_irq (struct uio_info_t* info)
-{
-	unsigned long tmp = 1;
-
-	if (!info || info->fd == -1)
-	{
-		errno = EINVAL;
-		perror ("uio_enable_irq");
-		return -1;
-	}
-
-	return (write (info->fd, &tmp, 4) == 4) ? 0 : -1;
-}
-
-/**
- * disable UIO device interrupt
- * @param name UIO device name
- */
-int uio_disable_irq (struct uio_info_t* info)
-{
-	unsigned long tmp = 0;
-
-	if (!info || info->fd == -1)
-	{
-		errno = EINVAL;
-		perror ("uio_disable_irq");
-		return -1;
-	}
-
-	return (write (info->fd, &tmp, 4) == 4) ? 0 : -1;
-}
-
-/**
- * wait for UIO device interrupt
- * @param info UIO device struct
- * @param timeout timeout or NULL to wait forever
- * @returns 0 success or -1 on failure
- */
-int uio_irqwait_timeout (struct uio_info_t* info, struct timeval *timeout)
-{
-	unsigned long dummy;
-	int ret;
-
-	if (!info || info->fd == -1)
-	{
-		errno = EINVAL;
-		perror ("uio_irqwait_timeout");
-		return -1;
-	}
-
-	if (timeout)
-	{
-		fd_set rfds;
-		FD_ZERO (&rfds);
-		FD_SET (info->fd, &rfds);
-
-		ret = select (info->fd + 1, &rfds, NULL, NULL, timeout);
-		switch (ret)
-		{
-		case 0:
-			errno = ETIMEDOUT;
-		case -1:
-			return -1;
-		}
-	}
-
-	ret = read (info->fd, &dummy, 4);
-
-	return (ret < 0) ? ret : 0;
 }
 
 /** @} */

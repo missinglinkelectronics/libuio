@@ -32,7 +32,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "libUIO.h"
+#include "libUIO_internal.h"
 
 /**
  * @defgroup libUIO_helper generic libUIO helper functions
