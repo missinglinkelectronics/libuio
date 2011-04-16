@@ -21,6 +21,7 @@
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -102,6 +103,132 @@ int uio_get_maxmap(struct uio_info_t* info)
 		return 0;
 
 	return info->maxmap;
+}
+
+/**
+ * read 8 bit from UIO device map
+ * @param info UIO device info struct
+ * @param map_num memory bar number
+ * @param offset register offset
+ */
+int uio_read8 (struct uio_info_t* info, int map, unsigned long offset,
+	       uint8_t *val)
+{
+	void *ptr;
+
+	if (!info || !val)
+		return -1;
+
+	ptr = info->maps [map].map + info->maps [map].offset + offset;
+
+	*val = *(volatile uint8_t *) ptr;
+
+	return 0;
+}
+
+/**
+ * read 16 bit from UIO device map
+ * @param info UIO device info struct
+ * @param map_num memory bar number
+ * @param offset register offset
+ */
+int uio_read16 (struct uio_info_t* info, int map, unsigned long offset,
+	       uint16_t *val)
+{
+	void *ptr;
+
+	if (!info || !val)
+		return -1;
+
+	ptr = info->maps [map].map + info->maps [map].offset + offset;
+
+	*val = *(volatile uint16_t *) ptr;
+
+	return 0;
+}
+
+/**
+ * read 32 bit from UIO device map
+ * @param info UIO device info struct
+ * @param map_num memory bar number
+ * @param offset register offset
+ */
+int uio_read32 (struct uio_info_t* info, int map, unsigned long offset,
+	       uint32_t *val)
+{
+	void *ptr;
+
+	if (!info || !val)
+		return -1;
+
+	ptr = info->maps [map].map + info->maps [map].offset + offset;
+
+	*val = *(volatile uint32_t *) ptr;
+
+	return 0;
+}
+
+/**
+ * write 8 bit from UIO device map
+ * @param info UIO device info struct
+ * @param map_num memory bar number
+ * @param offset register offset
+ */
+int uio_write8 (struct uio_info_t* info, int map, unsigned long offset,
+	       uint8_t val)
+{
+	void *ptr;
+
+	if (!info || !val)
+		return -1;
+
+	ptr = info->maps [map].map + info->maps [map].offset + offset;
+
+	*(volatile uint8_t *) ptr = val;
+
+	return 0;
+}
+
+/**
+ * write 16 bit from UIO device map
+ * @param info UIO device info struct
+ * @param map_num memory bar number
+ * @param offset register offset
+ */
+int uio_write16 (struct uio_info_t* info, int map, unsigned long offset,
+	       uint16_t val)
+{
+	void *ptr;
+
+	if (!info || !val)
+		return -1;
+
+	ptr = info->maps [map].map + info->maps [map].offset + offset;
+
+	*(volatile uint16_t *) ptr = val;
+
+	return 0;
+}
+
+/**
+ * write 32 bit from UIO device map
+ * @param info UIO device info struct
+ * @param map_num memory bar number
+ * @param offset register offset
+ */
+int uio_write32 (struct uio_info_t* info, int map, unsigned long offset,
+	       uint32_t val)
+{
+	void *ptr;
+
+	if (!info || !val)
+		return -1;
+
+	ptr = info->maps [map].map + info->maps [map].offset + offset;
+
+	*(volatile uint32_t *) ptr = val;
+
+	return 0;
 }
 
 /** @} */
