@@ -100,7 +100,7 @@ int main (int argc, char **argv)
 				printf ("    size: 0x%08x\n",
 					uio_get_mem_size (info, i));
 				printf ("  offset: 0x%08x\n",
-					uio_get_mem_size (info, i));
+					uio_get_offset (info, i));
 			}
 		}
 		printf ("\n");
