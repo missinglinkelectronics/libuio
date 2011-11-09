@@ -97,9 +97,9 @@ int main (int argc, char **argv)
 			{
 				printf ("%3d addr: 0x%08lx\n", i,
 					uio_get_mem_addr (info, i));
-				printf ("    size: 0x%08x\n",
+				printf ("    size: 0x%08zx\n",
 					uio_get_mem_size (info, i));
-				printf ("  offset: 0x%08x\n",
+				printf ("  offset: 0x%08zx\n",
 					uio_get_offset (info, i));
 			}
 		}
