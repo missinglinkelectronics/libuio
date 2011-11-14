@@ -3,8 +3,8 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: libUIO
+Name: libuio
 Description: UserspaceIO helper library
 Version: @VERSION@
-Libs: -L${libdir} -lUIO
+Libs: -L${libdir} -luio
 Cflags: -I${includedir}

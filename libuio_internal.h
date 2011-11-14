@@ -1,5 +1,5 @@
 /*
- * libUIO - UserspaceIO helper library
+ * libuio - UserspaceIO helper library
  *
  * Copyright (C) 2011 Benedikt Spranger
  * based on libUIO by Hans J. Koch
@@ -22,7 +22,7 @@
 #ifndef LIBUIO_INTERNAL_H
 #define LIBUIO_INTERNAL_H
 
-#include "libUIO.h"
+#include "libuio.h"
 
 struct uio_map_t {
 	unsigned long addr;

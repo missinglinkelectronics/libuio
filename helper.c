@@ -1,5 +1,5 @@
 /*
- * libUIO - UserspaceIO helper library
+ * libuio - UserspaceIO helper library
  *
  * Copyright (C) 2011 Benedikt Spranger
  * based on libUIO by Hans J. Koch
@@ -32,11 +32,11 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "libUIO_internal.h"
+#include "libuio_internal.h"
 
 /**
- * @defgroup libUIO_helper generic libUIO helper functions
- * @ingroup libUIO
+ * @defgroup libuio_helper generic libuio helper functions
+ * @ingroup libuio
  * @brief helper functions
  * @{
  */

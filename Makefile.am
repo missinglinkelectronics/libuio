@@ -1,15 +1,15 @@
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libUIO.pc
+pkgconfig_DATA = libuio.pc
 
 bin_PROGRAMS = lsuio
 lsuio_SOURCES = lsuio.c lsuio.1
 lsuio_CFLAGS = -W -Wall
-lsuio_LDADD = libUIO.la
+lsuio_LDADD = libuio.la
 
-lib_LTLIBRARIES = libUIO.la
-libUIO_la_SOURCES = base.c helper.c irq.c mem.c libUIO.h libUIO_internal.h
-libUIO_la_CFLAGS = -O2 -Wall -Wextra $(LIBUIO_WERROR)
-include_HEADERS = libUIO.h
+lib_LTLIBRARIES = libuio.la
+libuio_la_SOURCES = base.c helper.c irq.c mem.c libuio.h libuio_internal.h
+libuio_la_CFLAGS = -O2 -Wall -Wextra $(LIBUIO_WERROR)
+include_HEADERS = libuio.h
 
 # 1) If the library source code has changed at all since the last update, then
 #    increment revision ("c:r:a" becomes "c:r+1:a").
@@ -20,9 +20,9 @@ include_HEADERS = libUIO.h
 # 4) If any interfaces have been removed or changed since the last public
 #    release, then set age to 0. 
 
-libUIO_la_LDFLAGS = -version-info 1:0:0
+libuio_la_LDFLAGS = -version-info 1:0:0
 
-EXTRA_DIST = libUIO.pc.in libUIO-uninstalled.pc.in ChangeLog-from-git \
+EXTRA_DIST = libuio.pc.in libuio-uninstalled.pc.in ChangeLog-from-git \
 	lsuio.texinfo
 
 info_TEXINFOS = lsuio.texinfo
@@ -41,5 +41,5 @@ ACLOCAL_AMFLAGS = -I m4
 dist-hook:
 	$(top_srcdir)/ChangeLog-from-git $(top_srcdir)
 
-doc: libUIO.dox $(libUIO_la_SOURCES)
-	doxygen libUIO.dox
+doc: libuio.dox $(libuio_la_SOURCES)
+	doxygen libuio.dox

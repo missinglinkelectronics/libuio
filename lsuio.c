@@ -1,5 +1,5 @@
 /*
- * lsuio - libUIO example application.
+ * lsuio - libuio example application.
  *
  * Copyright (C) 2011 Benedikt Spranger
  *
@@ -24,7 +24,7 @@
 #include <sys/types.h>
 
 #include "config.h"
-#include "libUIO.h"
+#include "libuio.h"
 
 #define EXIT_FAILURE 1
 

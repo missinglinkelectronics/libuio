@@ -1,5 +1,5 @@
 /*
- * libUIO - UserspaceIO helper library
+ * libuio - UserspaceIO helper library
  *
  * Copyright (C) 2011 Benedikt Spranger
  * based on libUIO by Hans J. Koch

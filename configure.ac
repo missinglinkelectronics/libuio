@@ -39,6 +39,6 @@ AC_SUBST(LIBUIO_WERROR)
 
 dnl last but not least
 AC_OUTPUT([Makefile
-	libUIO.dox
-	libUIO-uninstalled.pc
-	libUIO.pc])
+	libuio.dox
+	libuio-uninstalled.pc
+	libuio.pc])
