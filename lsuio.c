@@ -20,6 +20,7 @@
 
 #include <argp.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <sys/types.h>
 
@@ -69,6 +70,7 @@ static struct argp argp =
 int main (int argc, char **argv)
 {
 	struct uio_info_t **uio_list, *info;
+	char **attr, **tmp;
 	int i;
 
 	textdomain (PACKAGE);
@@ -104,6 +106,20 @@ int main (int argc, char **argv)
 			}
 		}
 		printf ("\n");
+
+		printf ("Attr.  :\n");
+		attr = uio_list_attr (info);
+		for (tmp = attr; *tmp; tmp++)
+		{
+			printf ("  %s\n", *tmp);
+			if (want_verbose)
+				if (!strcmp (*tmp, "name") ||
+				    !strcmp (*tmp, "version"))
+					printf ("    %s\n",
+						uio_get_attr (info, *tmp));
+			free (*tmp);
+		}
+		free (attr);
 
 		if (want_access)
 		{

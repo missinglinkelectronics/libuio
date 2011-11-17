@@ -47,6 +47,11 @@ dev_t uio_get_devid (struct uio_info_t* info);
 int uio_open (struct uio_info_t* info);
 int uio_close (struct uio_info_t* info);
 
+/* attribute functions */
+char **uio_list_attr (struct uio_info_t* info);
+char *uio_get_attr (struct uio_info_t* info, char *attr);
+int uio_set_attr (struct uio_info_t* info, char *attr, char *value);
+
 /* memory functions */
 int uio_get_maxmap (struct uio_info_t* info);
 size_t uio_get_mem_size (struct uio_info_t* info, int map);

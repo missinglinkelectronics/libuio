@@ -7,7 +7,8 @@ lsuio_CFLAGS = -W -Wall
 lsuio_LDADD = libuio.la
 
 lib_LTLIBRARIES = libuio.la
-libuio_la_SOURCES = base.c helper.c irq.c mem.c libuio.h libuio_internal.h
+libuio_la_SOURCES = base.c helper.c irq.c mem.c attr.c \
+	libuio.h libuio_internal.h
 libuio_la_CFLAGS = -O2 -Wall -Wextra $(LIBUIO_WERROR)
 include_HEADERS = libuio.h
 
@@ -20,7 +21,7 @@ include_HEADERS = libuio.h
 # 4) If any interfaces have been removed or changed since the last public
 #    release, then set age to 0. 
 
-libuio_la_LDFLAGS = -version-info 1:0:0
+libuio_la_LDFLAGS = -version-info 2:0:1
 
 EXTRA_DIST = libuio.pc.in libuio-uninstalled.pc.in ChangeLog-from-git \
 	lsuio.texinfo

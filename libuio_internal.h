@@ -32,6 +32,7 @@ struct uio_map_t {
 };
 
 struct uio_info_t {
+	char *path;
 	char *name;
 	char *version;
 	struct uio_map_t *maps;
@@ -42,5 +43,6 @@ struct uio_info_t {
 };
 
 struct uio_info_t* create_uio_info (char *dir, char* name);
+char *first_line_from_file (char *filename);
 
 #endif /* LIBUIO_INTERNAL_H */

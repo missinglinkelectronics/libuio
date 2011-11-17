@@ -149,6 +149,8 @@ void uio_free_info(struct uio_info_t* info)
 {
 	if (info)
 	{
+		if (info->path)
+			free (info->path);
 		if (info->name)
 			free (info->name);
 		if (info->version)

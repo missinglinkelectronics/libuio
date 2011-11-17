@@ -263,6 +263,9 @@ struct uio_info_t *create_uio_info (char *dir, char *name)
 	if (!info)
 		return NULL;
 
+	snprintf (filename, PATH_MAX, "%s/%s", dir, name);
+	info->path = strdup (filename);
+
 	snprintf (filename, PATH_MAX, "%s/%s/name", dir, name);
 	info->name = first_line_from_file (filename);
 
