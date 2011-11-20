@@ -28,6 +28,10 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 
 dnl Checks for library functions.
 
+dnl i18n makros.
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.17])
+
 dnl with or without -Werror
 AC_ARG_WITH([werror],
             [AS_HELP_STRING([--without-werror],
@@ -41,4 +45,5 @@ dnl last but not least
 AC_OUTPUT([Makefile
 	libuio.dox
 	libuio-uninstalled.pc
-	libuio.pc])
+	libuio.pc
+	po/Makefile.in])

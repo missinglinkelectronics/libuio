@@ -1,3 +1,5 @@
+SUBDIRS = po
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libuio.pc
 
@@ -33,9 +35,11 @@ man_MANS = lsuio.1
 
 DISTCLEANFILES = *~
 
-MAINTAINERCLEANFILES = aclocal.m4 compile config.guess config.h.in \
-	config.sub configure depcomp INSTALL install-sh ltmain.sh m4/* \
-	Makefile.in missing texinfo.tex ChangeLog
+MAINTAINERCLEANFILES = ABOUT-NLS aclocal.m4 compile config.guess config.h.in \
+	config.rpath config.sub configure depcomp INSTALL install-sh \
+	ltmain.sh m4/* Makefile.in missing texinfo.tex ChangeLog \
+	po/Makefile.in.in po/Makevars.template po/Rules-quot po/*.header \
+	po/libuio.pot po/*.sed po/*.sin
 
 ACLOCAL_AMFLAGS = -I m4
 
