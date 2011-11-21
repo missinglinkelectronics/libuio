@@ -18,9 +18,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
  */
 
+#if HAVE_CONFIG_H
+#include "config.h"
+#endif /* HAVE_CONFIG_H */
+
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -178,7 +183,7 @@ struct uio_info_t **uio_find_devices ()
 	nr = scandir (sysfsname, &namelist, 0, alphasort);
 	if (nr < 0)
 	{
-		perror ("scandir");
+		g_error (_("scandir: %s\n"), g_strerror (errno));
 		return NULL;
 	}
 
@@ -186,7 +191,7 @@ struct uio_info_t **uio_find_devices ()
 	if (!info)
 	{
 		errno = ENOMEM;
-		perror ("calloc");
+		g_error (_("calloc: %s\n"), g_strerror (errno));
 		goto out;
 	}
 
@@ -243,14 +248,14 @@ int uio_open (struct uio_info_t* info)
 	if (!info)
 	{
 		errno = EINVAL;
-		perror ("uio_open");
+		g_error (_("uio_open: %s\n"), g_strerror (errno));
 		return -1;
 	}
 
 	fd = open (info->devname, O_RDWR);
 	if (fd < 0)
 	{
-		perror ("open");
+		g_error (_("open: %s\n"), g_strerror (errno));
 		return -1;
 	}
 
@@ -275,7 +280,7 @@ int uio_close (struct uio_info_t* info)
 	if (!info)
 	{
 		errno = EINVAL;
-		perror ("uio_close");
+		g_error (_("uio_close: %s\n"), g_strerror (errno));
 		return -1;
 	}
 

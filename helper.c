@@ -18,10 +18,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
  */
 
+#if HAVE_CONFIG_H
+#include "config.h"
+#endif /* HAVE_CONFIG_H */
+
 #include <dirent.h>
 #include <errno.h>
-#include <error.h>
 #include <fcntl.h>
+#include <glib.h>
 #include <regex.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,7 +58,7 @@ char *first_line_from_file (char *filename)
 	fd = open (filename, O_RDONLY);
 	if (fd < 0)
 	{
-		perror ("open");
+		g_error (_("open: %s"), g_strerror (errno));
 		return NULL;
 	}
 
@@ -65,14 +69,14 @@ char *first_line_from_file (char *filename)
 	if (!out)
 	{
 		errno = ENOMEM;
-		perror ("malloc");
+		g_error (_("malloc: %s"), g_strerror (errno));
 		goto out;
 	}
 
 	len = read (fd, out, len);
 	if (len < 0)
 	{
-		perror ("read");
+		g_error (_("read: %s"), g_strerror (errno));
 		free (out);
 		out = NULL;
 	}
@@ -98,7 +102,7 @@ dev_t devid_from_file (char *filename)
 	fhan = fopen (filename, "r");
 	if (!fhan)
 	{
-		perror ("fopen");
+		g_error (_("fopen: %s"), g_strerror (errno));
 		goto out;
 	}
 
@@ -128,7 +132,7 @@ static struct uio_map_t *scan_maps (char *dir, int *maxmap)
 	nr = scandir (dir, &namelist, 0, alphasort);
 	if (nr < 0)
 	{
-		perror ("scandir");
+		g_error (_("scandir: %s"), g_strerror (errno));
 		return NULL;
 	}
 
@@ -136,7 +140,7 @@ static struct uio_map_t *scan_maps (char *dir, int *maxmap)
 	if (!map)
 	{
 		errno = ENOMEM;
-		perror ("calloc");
+		g_error (_("calloc: %s"), g_strerror (errno));
 		goto out;
 	}
 
@@ -189,14 +193,14 @@ static int search_major_minor (const char *dir, dev_t devid, char **devname)
 	if (!devname)
 	{
 		errno = EINVAL;
-		perror ("search_major_minor");
+		g_error (_("search_major_minor: %s"), g_strerror (errno));
 		return -1;
 	}
 
 	nr = scandir (dir, &namelist, 0, alphasort);
 	if (nr < 0)
 	{
-		perror ("scandir");
+		g_error (_("scandir: %s"), g_strerror (errno));
 		return nr;
 	}
 
@@ -212,7 +216,7 @@ static int search_major_minor (const char *dir, dev_t devid, char **devname)
 		ret = lstat (name, &stat);
 		if (ret < 0)
 		{
-			perror ("lstat");
+			g_error (_("lstat: %s"), g_strerror (errno));
 			goto out;
 		}
 
@@ -231,7 +235,8 @@ static int search_major_minor (const char *dir, dev_t devid, char **devname)
 			*devname = strdup (name);
 			if (!*devname)
 			{
-				perror ("strdup");
+				errno = ENOMEM;
+				g_error (_("strdup: %s"), g_strerror (errno));
 				ret = -1;
 			}
 			else

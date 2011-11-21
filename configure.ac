@@ -28,6 +28,11 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 
 dnl Checks for library functions.
 
+dnl pkg-conf section
+PKG_CHECK_MODULES(PKGCONF, glib-2.0)
+AC_SUBST(PKGCONF_CFLAGS)
+AC_SUBST(PKGCONF_LIBS)
+
 dnl i18n makros.
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.17])

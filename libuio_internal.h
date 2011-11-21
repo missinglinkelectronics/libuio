@@ -24,6 +24,15 @@
 
 #include "libuio.h"
 
+#if ENABLE_NLS
+# include <libintl.h>
+# define _(Text) gettext (Text)
+#else
+# define textdomain(Domain)
+# define _(Text) Text
+#endif
+#define N_(Text) Text
+
 struct uio_map_t {
 	unsigned long addr;
 	size_t size;

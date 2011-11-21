@@ -5,13 +5,15 @@ pkgconfig_DATA = libuio.pc
 
 bin_PROGRAMS = lsuio
 lsuio_SOURCES = lsuio.c lsuio.1
-lsuio_CFLAGS = -W -Wall
-lsuio_LDADD = libuio.la
+lsuio_CFLAGS = -W -Wall @PKGCONF_CFLAGS@
+lsuio_LDADD = libuio.la @PKGCONF_LIBS@
 
 lib_LTLIBRARIES = libuio.la
 libuio_la_SOURCES = base.c helper.c irq.c mem.c attr.c \
 	libuio.h libuio_internal.h
-libuio_la_CFLAGS = -O2 -Wall -Wextra $(LIBUIO_WERROR)
+libuio_la_CFLAGS = -O2 -Wall -Wextra $(LIBUIO_WERROR) @PKGCONF_CFLAGS@ \
+	-DG_LOG_DOMAIN=\"libuio\"
+libuio_la_LIBADD = @PKGCONF_LIBS@
 include_HEADERS = libuio.h
 
 # 1) If the library source code has changed at all since the last update, then

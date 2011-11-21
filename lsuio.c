@@ -19,8 +19,10 @@
  */
 
 #include <argp.h>
+#include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <sys/types.h>
 
@@ -79,43 +81,43 @@ int main (int argc, char **argv)
 	uio_list = uio_find_devices ();
 	if (!uio_list)
 	{
-		printf ("No UIO devices found\n");
+		g_error (_("No UIO devices found\n"));
 		return 1;
 	}
 
 	for (;*uio_list; uio_list++)
 	{
 		info = *uio_list;
-		printf ("Name   : %s\n", uio_get_name (info));
-		printf ("Version: %s\n", uio_get_version (info));
-		printf ("DevId  : %d:%d\n", uio_get_major (info),
+		g_print (_("Name   : %s\n"), uio_get_name (info));
+		g_print (_("Version: %s\n"), uio_get_version (info));
+		g_print (_("DevId  : %d:%d\n"), uio_get_major (info),
 			uio_get_minor (info));
-		printf ("DevNode: %s\n", uio_get_devname (info));
+		g_print (_("DevNode: %s\n"), uio_get_devname (info));
 
 		if (want_verbose)
 		{
-			printf ("Map    :\n");
+			g_print (_("Map    :\n"));
 			for (i = 0; i < uio_get_maxmap (info); i++)
 			{
-				printf ("%3d addr: 0x%08lx\n", i,
+				g_print (_("%3d addr: 0x%08lx\n"), i,
 					uio_get_mem_addr (info, i));
-				printf ("    size: 0x%08zx\n",
+				g_print (_("    size: 0x%08zx\n"),
 					uio_get_mem_size (info, i));
-				printf ("  offset: 0x%08zx\n",
+				g_print (_("  offset: 0x%08zx\n"),
 					uio_get_offset (info, i));
 			}
 		}
-		printf ("\n");
+		g_print (_("\n"));
 
-		printf ("Attr.  :\n");
+		g_print (_("Attr.  :\n"));
 		attr = uio_list_attr (info);
 		for (tmp = attr; *tmp; tmp++)
 		{
-			printf ("  %s\n", *tmp);
+			g_print (_("  %s\n"), *tmp);
 			if (want_verbose)
 				if (!strcmp (*tmp, "name") ||
 				    !strcmp (*tmp, "version"))
-					printf ("    %s\n",
+					g_print (_("    %s\n"),
 						uio_get_attr (info, *tmp));
 			free (*tmp);
 		}
@@ -123,17 +125,17 @@ int main (int argc, char **argv)
 
 		if (want_access)
 		{
-			printf ("open : ");
+			g_print (_("open : "));
 			if (!uio_open (info))
-				printf ("OK\n");
+				g_print (_("OK\n"));
 			else
-				printf ("failed\n");
+				g_print (_("failed\n"));
 
-			printf ("close: ");
+			g_print (_("close: "));
 			if (!uio_close (info))
-				printf ("OK\n");
+				g_print (_("OK\n"));
 			else
-				printf ("failed\n");
+				g_print (_("failed\n"));
 		}
 	}
 
@@ -175,9 +177,9 @@ static void show_version (FILE *stream, struct argp_state *state)
 {
 	(void) state;
 
-	fputs(PACKAGE" "VERSION"\n", stream);
-	fprintf(stream, _("Written by %s.\n\n"), "Benedikt Spranger");
-	fprintf(stream, _("Copyright (C) %s %s\n"), "2011", "Benedikt Spranger");
+	fputs (PACKAGE" "VERSION"\n", stream);
+	fprintf (stream, _("Written by %s.\n\n"), "Benedikt Spranger");
+	fprintf (stream, _("Copyright (C) %s %s\n"), "2011", "Benedikt Spranger");
 	fputs(_("\
 This program is free software; you may redistribute it under the terms of\n\
 the GNU General Public License.  This program has absolutely no warranty.\n"),
