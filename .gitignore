@@ -24,6 +24,7 @@ GTAGS
 #
 # autotools generated files and directories
 #
+ABOUT-NLS
 ChangeLog
 INSTALL
 Makefile.in
@@ -32,12 +33,25 @@ autom4te.cache/
 compile
 config.guess
 config.h.in
+config.rpath
 config.sub
 configure
 depcomp
 install-sh
+libUIO-uninstalled.pc
+libUIO.dox
+libUIO.la
+libUIO.pc
 ltmain.sh
 lsuio.info
 m4/
 missing
+po/Makefile.in.in
+po/Makevars.template
+po/Rules-quot
+po/*.header
+po/*.sed
+po/*.sin
+po/libuio.pot
+po/stamp-po
 texinfo.tex

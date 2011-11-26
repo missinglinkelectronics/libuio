@@ -1,0 +1,5 @@
+libuio (0.2-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Benedikt Spranger <b.spranger@linutronix.de>  Thu, 14 Apr 2011 19:19:14 +0200
