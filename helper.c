@@ -119,7 +119,7 @@ out:
  * read a line from a file
  * @param dir map directory
  * @param maxmap available maps
- * @returns maps or NULL on failure
+ * @returns maps or NULL on failure/no maps
  */
 static struct uio_map_t *scan_maps (char *dir, int *maxmap)
 {
@@ -132,7 +132,7 @@ static struct uio_map_t *scan_maps (char *dir, int *maxmap)
 	nr = scandir (dir, &namelist, 0, alphasort);
 	if (nr < 0)
 	{
-		g_error (_("scandir: %s"), g_strerror (errno));
+		g_warning (_("scandir: %s"), g_strerror (errno));
 		return NULL;
 	}
 
