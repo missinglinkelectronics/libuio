@@ -10,12 +10,18 @@ Package: libuio-dev
 Section: libdevel
 Architecture: any
 Depends: libuio1 (= ${binary:Version}), ${misc:Depends}
-Description: UserspaceIO helper library
- A small UserspaceIO driver helper library.
+Description: Userspace IO helper library
+ A small Userspace IO driver helper library. (development files)
 
 Package: libuio1
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: UserspaceIO helper library
- A small UserspaceIO driver helper library.
+Description: Userspace IO helper library
+ A small Userspace IO driver helper library.
+
+Package: lsuio
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: list Userspace IO devices
+ A small example Application using the Userspace IO helper library.
