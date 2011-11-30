@@ -183,7 +183,7 @@ struct uio_info_t **uio_find_devices ()
 	nr = scandir (sysfsname, &namelist, 0, alphasort);
 	if (nr < 0)
 	{
-		g_error (_("scandir: %s\n"), g_strerror (errno));
+		g_warning (_("scandir: %s\n"), g_strerror (errno));
 		return NULL;
 	}
 
@@ -191,7 +191,7 @@ struct uio_info_t **uio_find_devices ()
 	if (!info)
 	{
 		errno = ENOMEM;
-		g_error (_("calloc: %s\n"), g_strerror (errno));
+		g_warning (_("calloc: %s\n"), g_strerror (errno));
 		goto out;
 	}
 
@@ -248,14 +248,14 @@ int uio_open (struct uio_info_t* info)
 	if (!info)
 	{
 		errno = EINVAL;
-		g_error (_("uio_open: %s\n"), g_strerror (errno));
+		g_warning (_("uio_open: %s\n"), g_strerror (errno));
 		return -1;
 	}
 
 	fd = open (info->devname, O_RDWR);
 	if (fd < 0)
 	{
-		g_error (_("open: %s\n"), g_strerror (errno));
+		g_warning (_("open: %s\n"), g_strerror (errno));
 		return -1;
 	}
 
@@ -280,7 +280,7 @@ int uio_close (struct uio_info_t* info)
 	if (!info)
 	{
 		errno = EINVAL;
-		g_error (_("uio_close: %s\n"), g_strerror (errno));
+		g_warning (_("uio_close: %s\n"), g_strerror (errno));
 		return -1;
 	}
 
