@@ -81,7 +81,7 @@ int main (int argc, char **argv)
 	uio_list = uio_find_devices ();
 	if (!uio_list)
 	{
-		g_error (_("No UIO devices found\n"));
+		g_print (_("No UIO devices found\n"));
 		return 1;
 	}
 

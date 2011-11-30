@@ -58,7 +58,7 @@ char *first_line_from_file (char *filename)
 	fd = open (filename, O_RDONLY);
 	if (fd < 0)
 	{
-		g_error (_("open: %s"), g_strerror (errno));
+		g_warning (_("open: %s"), g_strerror (errno));
 		return NULL;
 	}
 
@@ -69,14 +69,14 @@ char *first_line_from_file (char *filename)
 	if (!out)
 	{
 		errno = ENOMEM;
-		g_error (_("malloc: %s"), g_strerror (errno));
+		g_warning (_("malloc: %s"), g_strerror (errno));
 		goto out;
 	}
 
 	len = read (fd, out, len);
 	if (len < 0)
 	{
-		g_error (_("read: %s"), g_strerror (errno));
+		g_warning (_("read: %s"), g_strerror (errno));
 		free (out);
 		out = NULL;
 	}
@@ -102,7 +102,7 @@ dev_t devid_from_file (char *filename)
 	fhan = fopen (filename, "r");
 	if (!fhan)
 	{
-		g_error (_("fopen: %s"), g_strerror (errno));
+		g_warning (_("fopen: %s"), g_strerror (errno));
 		goto out;
 	}
 
@@ -140,7 +140,7 @@ static struct uio_map_t *scan_maps (char *dir, int *maxmap)
 	if (!map)
 	{
 		errno = ENOMEM;
-		g_error (_("calloc: %s"), g_strerror (errno));
+		g_warning (_("calloc: %s"), g_strerror (errno));
 		goto out;
 	}
 
@@ -193,14 +193,14 @@ static int search_major_minor (const char *dir, dev_t devid, char **devname)
 	if (!devname)
 	{
 		errno = EINVAL;
-		g_error (_("search_major_minor: %s"), g_strerror (errno));
+		g_warning (_("search_major_minor: %s"), g_strerror (errno));
 		return -1;
 	}
 
 	nr = scandir (dir, &namelist, 0, alphasort);
 	if (nr < 0)
 	{
-		g_error (_("scandir: %s"), g_strerror (errno));
+		g_warning (_("scandir: %s"), g_strerror (errno));
 		return nr;
 	}
 
@@ -216,7 +216,7 @@ static int search_major_minor (const char *dir, dev_t devid, char **devname)
 		ret = lstat (name, &stat);
 		if (ret < 0)
 		{
-			g_error (_("lstat: %s"), g_strerror (errno));
+			g_warning (_("lstat: %s"), g_strerror (errno));
 			goto out;
 		}
 
@@ -236,7 +236,7 @@ static int search_major_minor (const char *dir, dev_t devid, char **devname)
 			if (!*devname)
 			{
 				errno = ENOMEM;
-				g_error (_("strdup: %s"), g_strerror (errno));
+				g_warning (_("strdup: %s"), g_strerror (errno));
 				ret = -1;
 			}
 			else

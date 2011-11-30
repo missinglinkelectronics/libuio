@@ -21,6 +21,7 @@
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -52,7 +53,7 @@ int uio_enable_irq (struct uio_info_t* info)
 	if (!info || info->fd == -1)
 	{
 		errno = EINVAL;
-		perror ("uio_enable_irq");
+		g_warning (_("%s: %s"), __func__, g_strerror (errno));
 		return -1;
 	}
 
@@ -71,7 +72,7 @@ int uio_disable_irq (struct uio_info_t* info)
 	if (!info || info->fd == -1)
 	{
 		errno = EINVAL;
-		perror ("uio_disable_irq");
+		g_warning (_("%s: %s"), __func__, g_strerror (errno));
 		return -1;
 	}
 
@@ -92,7 +93,7 @@ int uio_irqwait_timeout (struct uio_info_t* info, struct timeval *timeout)
 	if (!info || info->fd == -1)
 	{
 		errno = EINVAL;
-		perror ("uio_irqwait_timeout");
+		g_warning (_("%s: %s"), __func__, g_strerror (errno));
 		return -1;
 	}
 
