@@ -268,7 +268,7 @@ struct uio_info_t *create_uio_info (char *dir, char *name)
 	if (!info)
 		return NULL;
 
-	snprintf (filename, PATH_MAX, "%s/%s", dir, name);
+	snprintf (filename, PATH_MAX, "%s/%s/device", dir, name);
 	info->path = strdup (filename);
 
 	snprintf (filename, PATH_MAX, "%s/%s/name", dir, name);
