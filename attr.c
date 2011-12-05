@@ -153,4 +153,95 @@ int uio_set_attr (struct uio_info_t* info, char *attr, char *value)
 	return ret;
 }
 
+/**
+ * get binary UIO attribute
+ * @param info UIO device info struct
+ * @param attr attribute name
+ * @param count read count byte
+ * @returns UIO attribute content or NULL on failure
+ */
+void *uio_get_bin_attr (struct uio_info_t* info, char *attr, size_t count)
+{
+	char filename [PATH_MAX];
+	void *value;
+	size_t len;
+	int err, fd;
+
+	if (!info || !attr || count <= 0)
+	{
+		errno = EINVAL;
+		g_warning (_("uio_get_bin_attr: %s\n"), g_strerror (errno));
+		return NULL;
+	}
+
+	value = malloc (count);
+	{
+		errno = ENOMEM;
+		g_warning (_("uio_get_bin_attr: %s\n"), g_strerror (errno));
+		return NULL;
+	}
+
+	snprintf (filename, PATH_MAX, "%s/%s", info->path, attr);
+
+	fd = open (filename, O_RDONLY);
+	if (fd < 0)
+	{
+		free (value);
+		g_warning (_("open: %s"), g_strerror (errno));
+		return NULL;
+	}
+
+	len = read (fd, value, count);
+	if (len <= 0)
+	{
+		free (value);
+		value = NULL;
+	}
+
+	err = errno;
+	close (fd);
+	errno = err;
+
+	return value;
+}
+
+/**
+ * set binary UIO attribute
+ * @param info UIO device info struct
+ * @param attr attribute name
+ * @param value attribute content
+ * @returns 0 on succes or -1 on failure
+ */
+int uio_set_bin_attr (struct uio_info_t* info, char *attr,
+		      void *value, size_t count)
+{
+	char filename [PATH_MAX];
+	int err, fd, ret = -1;
+	size_t len;
+
+	if (!info || !attr || !value) {
+		errno = EINVAL;
+		g_warning (_("uio_set_attr: %s"), g_strerror (errno));
+		return -1;
+	}
+	snprintf (filename, PATH_MAX, "%s/%s", info->path, attr);
+
+	fd = open (filename, O_WRONLY);
+	if (fd < 0)
+	{
+		g_warning (_("open: %s"), g_strerror (errno));
+		return -1;
+	}
+
+	len = write (fd, value, count);
+	if (len > 0)
+		ret = 0;
+
+	err = errno;
+	close (fd);
+	errno = err;
+
+	return ret;
+}
+
 /** @} */
