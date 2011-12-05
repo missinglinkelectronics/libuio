@@ -51,6 +51,9 @@ int uio_close (struct uio_info_t* info);
 char **uio_list_attr (struct uio_info_t* info);
 char *uio_get_attr (struct uio_info_t* info, char *attr);
 int uio_set_attr (struct uio_info_t* info, char *attr, char *value);
+void *uio_get_bin_attr (struct uio_info_t* info, char *attr, size_t count);
+int uio_set_bin_attr (struct uio_info_t* info, char *attr,
+		      void *value, size_t count);
 
 /* memory functions */
 int uio_get_maxmap (struct uio_info_t* info);
