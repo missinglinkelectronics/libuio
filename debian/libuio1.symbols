@@ -9,6 +9,7 @@ libuio.so.1 libuio1 #MINVER#
  uio_find_devices@Base 0.2
  uio_free_info@Base 0.2
  uio_get_attr@Base 0.2
+ uio_get_bin_attr@Base 0.2
  uio_get_devid@Base 0.2
  uio_get_devname@Base 0.2
  uio_get_major@Base 0.2
@@ -27,6 +28,7 @@ libuio.so.1 libuio1 #MINVER#
  uio_read32@Base 0.2
  uio_read8@Base 0.2
  uio_set_attr@Base 0.2
+ uio_set_bin_attr@Base 0.2
  uio_setsysfs_point@Base 0.2
  uio_write16@Base 0.2
  uio_write32@Base 0.2
