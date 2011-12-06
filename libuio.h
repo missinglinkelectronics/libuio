@@ -67,12 +67,16 @@ int uio_read16 (struct uio_info_t* info, int map, unsigned long offset,
 		uint16_t *val);
 int uio_read32 (struct uio_info_t* info, int map, unsigned long offset,
 		uint32_t *val);
+int uio_read64 (struct uio_info_t* info, int map, unsigned long offset,
+		uint64_t *val);
 int uio_write8 (struct uio_info_t* info, int map, unsigned long offset,
 		uint8_t val);
 int uio_write16 (struct uio_info_t* info, int map, unsigned long offset,
 		 uint16_t val);
 int uio_write32 (struct uio_info_t* info, int map, unsigned long offset,
 		 uint32_t val);
+int uio_write64 (struct uio_info_t* info, int map, unsigned long offset,
+		 uint64_t val);
 
 /* irq functions */
 int uio_enable_irq (struct uio_info_t* info);
