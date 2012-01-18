@@ -9,14 +9,19 @@ Vcs-Git: git://git.linutronix.de/projects/libUIO.git
 Package: libuio-dev
 Section: libdevel
 Architecture: any
-Depends: libuio1 (= ${binary:Version}), ${misc:Depends}
+Depends: libuio1 (= ${binary:Version}),
+	 libglib2.0-dev,
+	 ${misc:Depends}
 Description: Userspace IO helper library
  A small Userspace IO driver helper library. (development files)
 
 Package: libuio1
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends},
+	 libglib2.0-dev,
+	 texinfo,
+	 ${misc:Depends}
 Description: Userspace IO helper library
  A small Userspace IO driver helper library.
 
