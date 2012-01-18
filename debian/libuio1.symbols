@@ -26,10 +26,12 @@ libuio.so.1 libuio1 #MINVER#
  uio_open@Base 0.2
  uio_read16@Base 0.2
  uio_read32@Base 0.2
+ uio_read64@Base 0.2
  uio_read8@Base 0.2
  uio_set_attr@Base 0.2
  uio_set_bin_attr@Base 0.2
  uio_setsysfs_point@Base 0.2
  uio_write16@Base 0.2
  uio_write32@Base 0.2
+ uio_write64@Base 0.2
  uio_write8@Base 0.2
