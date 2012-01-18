@@ -32,6 +32,8 @@ autom4te.cache/
 compile
 config.guess
 config.h.in
+config.log
+config.rpath
 config.sub
 configure
 depcomp
