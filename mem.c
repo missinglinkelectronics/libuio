@@ -217,7 +217,7 @@ int uio_write8 (struct uio_info_t* info, int map_num, unsigned long offset,
 {
 	void *ptr;
 
-	if (!info || !val)
+	if (!info)
 		return -1;
 
 	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
@@ -240,7 +240,7 @@ int uio_write16 (struct uio_info_t* info, int map_num, unsigned long offset,
 {
 	void *ptr;
 
-	if (!info || !val)
+	if (!info)
 		return -1;
 
 	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
@@ -263,7 +263,7 @@ int uio_write32 (struct uio_info_t* info, int map_num, unsigned long offset,
 {
 	void *ptr;
 
-	if (!info || !val)
+	if (!info)
 		return -1;
 
 	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
@@ -286,7 +286,7 @@ int uio_write64 (struct uio_info_t* info, int map_num, unsigned long offset,
 {
 	void *ptr;
 
-	if (!info || !val)
+	if (!info)
 		return -1;
 
 	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
