@@ -262,7 +262,7 @@ int uio_open (struct uio_info_t* info)
 	for (i = 0; i < info->maxmap; i++)
 		info->maps [i].map = mmap (NULL, info->maps [i].size,
 					   PROT_READ | PROT_WRITE,
-					   MAP_SHARED, fd, i);
+					   MAP_SHARED, fd, i * getpagesize());
 	info->fd = fd;
 
 	return 0;
