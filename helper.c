@@ -131,10 +131,7 @@ static struct uio_map_t *scan_maps (char *dir, int *maxmap)
 	*maxmap = 0;
 	nr = scandir (dir, &namelist, 0, alphasort);
 	if (nr < 0)
-	{
-		g_warning (_("scandir: %s"), g_strerror (errno));
 		return NULL;
-	}
 
 	map = calloc (nr, sizeof (struct uio_map_t));
 	if (!map)
