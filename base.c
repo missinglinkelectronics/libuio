@@ -237,11 +237,54 @@ struct uio_info_t *uio_find_by_uio_num (int uio_num)
 }
 
 /**
+ * open a UIO device (try to map to given address)
+ * @param info UIO device info stuct
+ * @param ptr try to map at ptr
+ * @returns 0 on success or -1 on failure and errno is set
+ */
+int uio_open_fix (struct uio_info_t* info, void *ptr)
+{
+	int fd, i;
+
+	if (!info)
+	{
+		errno = EINVAL;
+		g_warning (_("uio_open: %s\n"), g_strerror (errno));
+		return -1;
+	}
+
+	fd = open (info->devname, O_RDWR);
+	if (fd < 0)
+	{
+		g_warning (_("open: %s\n"), g_strerror (errno));
+		return -1;
+	}
+
+	for (i = 0; i < info->maxmap; i++)
+		info->maps [i].map = mmap (ptr, info->maps [i].size,
+					   PROT_READ | PROT_WRITE,
+					   MAP_SHARED, fd, i * getpagesize());
+	info->fd = fd;
+
+	return 0;
+}
+
+/**
  * open a UIO device
  * @param info UIO device info stuct
  * @returns 0 on success or -1 on failure and errno is set
  */
 int uio_open (struct uio_info_t* info)
+{
+	return uio_open_fix (info, NULL);
+}
+
+/**
+ * open a UIO device (COW)
+ * @param info UIO device info stuct
+ * @returns 0 on success or -1 on failure and errno is set
+ */
+int uio_open_private (struct uio_info_t* info)
 {
 	int fd, i;
 
@@ -262,7 +305,7 @@ int uio_open (struct uio_info_t* info)
 	for (i = 0; i < info->maxmap; i++)
 		info->maps [i].map = mmap (NULL, info->maps [i].size,
 					   PROT_READ | PROT_WRITE,
-					   MAP_SHARED, fd, i * getpagesize());
+					   MAP_PRIVATE, fd, i * getpagesize());
 	info->fd = fd;
 
 	return 0;
