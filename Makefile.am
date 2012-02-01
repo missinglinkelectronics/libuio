@@ -25,7 +25,7 @@ include_HEADERS = libuio.h
 # 4) If any interfaces have been removed or changed since the last public
 #    release, then set age to 0. 
 
-libuio_la_LDFLAGS = -version-info 2:0:1
+libuio_la_LDFLAGS = -version-info 2:1:0
 
 EXTRA_DIST = libuio.pc.in libuio-uninstalled.pc.in ChangeLog-from-git \
 	lsuio.texinfo
