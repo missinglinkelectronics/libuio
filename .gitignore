@@ -24,6 +24,7 @@ GTAGS
 #
 # autotools generated files and directories
 #
+ABOUT-NLS
 ChangeLog
 INSTALL
 Makefile.in
