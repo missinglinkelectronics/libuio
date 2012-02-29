@@ -58,7 +58,7 @@ char *first_line_from_file (char *filename)
 	fd = open (filename, O_RDONLY);
 	if (fd < 0)
 	{
-		g_warning (_("open: %s"), g_strerror (errno));
+		g_warning (_("open: %s: %s"), filename, g_strerror (errno));
 		return NULL;
 	}
 
