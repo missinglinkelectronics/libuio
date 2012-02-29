@@ -265,7 +265,8 @@ int uio_open_fix (struct uio_info_t* info, void *ptr)
 		info->maps [i].map = mmap (ptr, info->maps [i].size,
 					   PROT_READ | PROT_WRITE,
 					   MAP_SHARED, fd, i * getpagesize());
-		ptr += info->maps [i].size;
+		if (ptr)
+			ptr += info->maps [i].size;
 	}
 	info->fd = fd;
 
