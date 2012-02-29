@@ -261,9 +261,12 @@ int uio_open_fix (struct uio_info_t* info, void *ptr)
 	}
 
 	for (i = 0; i < info->maxmap; i++)
+	{
 		info->maps [i].map = mmap (ptr, info->maps [i].size,
 					   PROT_READ | PROT_WRITE,
 					   MAP_SHARED, fd, i * getpagesize());
+		ptr += info->maps [i].size;
+	}
 	info->fd = fd;
 
 	return 0;
