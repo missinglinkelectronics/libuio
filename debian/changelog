@@ -1,4 +1,20 @@
-libuio (0.2-1) unstable; urgency=low
+libuio (0.2.3-1) unstable; urgency=low
+
+  * various fixes
+  * merge debian support into upstrem
+
+ -- Benedikt Spranger <b.spranger@linutronix.de>  Mon, 18 Jun 2012 21:12:58 +0200
+
+libuio (0.2.2-1) unstable; urgency=low
+
+  * attribute helper
+  * i18n support
+  * 64bit access macros
+  * various fixes
+
+ -- Benedikt Spranger <b.spranger@linutronix.de>  Wed, 01 Feb 2012 11:14:39 +0100
+
+libuio (0.2.1-1) unstable; urgency=low
 
   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
 
