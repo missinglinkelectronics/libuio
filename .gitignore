@@ -46,3 +46,8 @@ lsuio.info
 m4/
 missing
 texinfo.tex
+
+#
+# ignore package archive
+#
+*.tar.*
