@@ -1,0 +1,14 @@
+libuio (0.2.2-1) unstable; urgency=low
+
+  * attribute helper
+  * i18n support
+  * 64bit access macros
+  * various fixes
+
+ -- Benedikt Spranger <b.spranger@linutronix.de>  Wed, 01 Feb 2012 11:14:39 +0100
+
+libuio (0.2.1-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Benedikt Spranger <b.spranger@linutronix.de>  Thu, 14 Apr 2011 19:19:14 +0200

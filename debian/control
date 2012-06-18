@@ -1,0 +1,27 @@
+Source: libuio
+Priority: extra
+Maintainer: Benedikt Spranger <b.spranger@linutronix.de>
+Build-Depends: debhelper (>= 7.0.50~), autotools-dev
+Standards-Version: 3.9.1
+Section: libs
+Vcs-Git: git://git.linutronix.de/projects/libUIO.git
+
+Package: libuio-dev
+Section: libdevel
+Architecture: any
+Depends: libuio1 (= ${binary:Version}), ${misc:Depends}
+Description: Userspace IO helper library
+ A small Userspace IO driver helper library. (development files)
+
+Package: libuio1
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Userspace IO helper library
+ A small Userspace IO driver helper library.
+
+Package: lsuio
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: list Userspace IO devices
+ A small example Application using the Userspace IO helper library.
