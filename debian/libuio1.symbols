@@ -5,6 +5,7 @@ libuio.so.2 libuio1 #MINVER#
  uio_close@Base 0.2
  uio_disable_irq@Base 0.2
  uio_enable_irq@Base 0.2
+ uio_find_by_uio_name@Base 0.2
  uio_find_by_uio_num@Base 0.2
  uio_find_devices@Base 0.2
  uio_free_info@Base 0.2

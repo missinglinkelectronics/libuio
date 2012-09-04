@@ -213,6 +213,37 @@ out:
 }
 
 /**
+ * find UIO devices by UIO name
+ * @param uio_name UIO name
+ * @returns device info or NULL on failure
+ */
+struct uio_info_t *uio_find_by_uio_name (char *uio_name)
+{
+	struct uio_info_t *info = NULL, **list, **uio_list;
+	char *name;
+
+	if (!uio_name)
+		return NULL;
+
+	uio_list = uio_find_devices ();
+	if (!uio_list)
+		return NULL;
+
+	for (list = uio_list; *list; list++)
+	{
+		info = *list;
+
+		name = uio_get_name (info);
+
+		if (!strcmp (name, uio_name))
+			break;
+	}
+	free (uio_list);
+
+	return info;
+}
+
+/**
  * find UIO devices by UIO enumeration number
  * @param uio_num UIO enumeration number
  * @returns device info or NULL on failure
