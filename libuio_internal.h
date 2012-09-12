@@ -24,6 +24,13 @@
 
 #include "libuio.h"
 
+#ifdef USE_GLIB
+#include <glib.h>
+#else
+#define g_strerror	strerror
+#define g_warning(...)	fprintf(stderr, __VA_ARGS__)
+#endif
+
 #if ENABLE_NLS
 # include <libintl.h>
 # define _(Text) gettext (Text)

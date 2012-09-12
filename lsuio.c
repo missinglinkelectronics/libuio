@@ -19,7 +19,6 @@
  */
 
 #include <argp.h>
-#include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,6 +27,12 @@
 
 #include "config.h"
 #include "libuio.h"
+
+#ifdef USE_GLIB
+#include <glib.h>
+#else
+#define g_print	printf
+#endif
 
 #define EXIT_FAILURE 1
 
