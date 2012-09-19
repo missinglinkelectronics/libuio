@@ -3,15 +3,15 @@ SUBDIRS = po
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libuio.pc
 
-bin_PROGRAMS = lsuio uioshow
+bin_PROGRAMS = lsuio readuio
 
 lsuio_SOURCES = lsuio.c lsuio.1
 lsuio_CFLAGS = -W -Wall @PKGCONF_CFLAGS@
 lsuio_LDADD = libuio.la @PKGCONF_LIBS@
 
-uioshow_SOURCES = uioshow.c
-uioshow_CFLAGS = -W -Wall @PKGCONF_CFLAGS@
-uioshow_LDADD = libuio.la @PKGCONF_LIBS@
+readuio_SOURCES = readuio.c
+readuio_CFLAGS = -W -Wall @PKGCONF_CFLAGS@
+readuio_LDADD = libuio.la @PKGCONF_LIBS@
 
 lib_LTLIBRARIES = libuio.la
 libuio_la_SOURCES = base.c helper.c irq.c mem.c attr.c \
