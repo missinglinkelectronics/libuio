@@ -3,10 +3,15 @@ SUBDIRS = po
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libuio.pc
 
-bin_PROGRAMS = lsuio
+bin_PROGRAMS = lsuio uioshow
+
 lsuio_SOURCES = lsuio.c lsuio.1
 lsuio_CFLAGS = -W -Wall @PKGCONF_CFLAGS@
 lsuio_LDADD = libuio.la @PKGCONF_LIBS@
+
+uioshow_SOURCES = uioshow.c
+uioshow_CFLAGS = -W -Wall @PKGCONF_CFLAGS@
+uioshow_LDADD = libuio.la @PKGCONF_LIBS@
 
 lib_LTLIBRARIES = libuio.la
 libuio_la_SOURCES = base.c helper.c irq.c mem.c attr.c \
@@ -25,7 +30,7 @@ include_HEADERS = libuio.h
 # 4) If any interfaces have been removed or changed since the last public
 #    release, then set age to 0. 
 
-libuio_la_LDFLAGS = -version-info 2:1:0
+libuio_la_LDFLAGS = -version-info 3:0:1
 
 DEBIAN_FILES = debian/changelog debian/compat debian/control debian/copyright \
 	debian/docs debian/gbp.conf debian/libuio-dev.dirs \

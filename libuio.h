@@ -36,6 +36,7 @@ struct uio_info_t;
 
 /* base functions */
 struct uio_info_t **uio_find_devices ();
+struct uio_info_t *uio_find_by_uio_name (char *uio_name);
 struct uio_info_t *uio_find_by_uio_num (int num);
 void uio_setsysfs_point (const char *sysfs_mpoint);
 char *uio_get_name (struct uio_info_t* info);
@@ -45,7 +46,7 @@ int uio_get_major (struct uio_info_t* info);
 int uio_get_minor (struct uio_info_t* info);
 dev_t uio_get_devid (struct uio_info_t* info);
 int uio_open (struct uio_info_t* info);
-	int uio_open_fix (struct uio_info_t* info, void *ptr);
+int uio_open_fix (struct uio_info_t* info, void *ptr);
 int uio_open_private (struct uio_info_t* info);
 int uio_close (struct uio_info_t* info);
 
