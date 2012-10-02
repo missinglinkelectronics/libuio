@@ -155,6 +155,10 @@ static struct uio_map_t *scan_maps (char *dir, int *maxmap)
 		map [t].addr = strtoul (tmp, NULL, 0);
 		free (tmp);
 
+		snprintf (name, sizeof (name), "%s/%s/name",
+			  dir, namelist [i]->d_name);
+		map [t].name = first_line_from_file (name);
+
 		snprintf (name, sizeof (name), "%s/%s/size",
 			  dir, namelist [i]->d_name);
 		tmp = first_line_from_file (name);

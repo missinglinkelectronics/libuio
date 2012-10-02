@@ -63,7 +63,9 @@ int uio_get_maxmap (struct uio_info_t* info);
 size_t uio_get_mem_size (struct uio_info_t* info, int map);
 unsigned long uio_get_mem_addr (struct uio_info_t* info, int map);
 void *uio_get_mem_map (struct uio_info_t* info, int map);
+char *uio_get_mem_name (struct uio_info_t* info, int map_num);
 size_t uio_get_offset (struct uio_info_t* info, int map);
+int uio_get_map_index_by_name (struct uio_info_t* info, char *name);
 int uio_read8 (struct uio_info_t* info, int map, unsigned long offset,
 	       uint8_t *val);
 int uio_read16 (struct uio_info_t* info, int map, unsigned long offset,

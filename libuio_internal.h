@@ -44,6 +44,7 @@ struct uio_map_t {
 	unsigned long addr;
 	size_t size;
 	size_t offset;
+	char *name;
 	void *map;
 };
 

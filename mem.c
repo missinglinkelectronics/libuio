@@ -100,6 +100,21 @@ void *uio_get_mem_map (struct uio_info_t* info, int map_num)
 }
 
 /**
+ * get memory map name
+ * @param info UIO device info struct
+ * @param map_num memory bar number
+ * @return UIO memory bar name or NULL on failure
+ */
+char *uio_get_mem_name (struct uio_info_t* info, int map_num)
+{
+	if (!info ||
+	    map_num >= info->maxmap)
+		return NULL;
+
+	return info->maps [map_num].name;
+}
+
+/**
  * get UIO device map count
  * @param info UIO device info struct
  * @return number of UIO memory bars
@@ -110,6 +125,31 @@ int uio_get_maxmap(struct uio_info_t* info)
 		return 0;
 
 	return info->maxmap;
+}
+
+/**
+ * get UIO device map number by map name
+ * @param info UIO device info struct
+ * @param char UIO device map name
+ * @return UIO device map number or -1 on failure
+ */
+int uio_get_map_index_by_name (struct uio_info_t* info, char *name)
+{
+	int i, ret = -1;
+
+	if (!info || !name)
+		return -1;
+
+	for (i = 0; i < info->maxmap; i++)
+	{
+		if (!strcmp (name, info->name))
+		{
+			ret = i;
+			break;
+		}
+	}
+
+	return ret;
 }
 
 /**
