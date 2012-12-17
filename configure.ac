@@ -1,5 +1,5 @@
 dnl Every other copy of the package version number gets its value from here
-AC_INIT(libuio, 0.2.3, b.spranger@linutronix.de)
+AC_INIT(libuio, 0.2.4, b.spranger@linutronix.de)
 AM_INIT_AUTOMAKE
 
 AM_CONFIG_HEADER(config.h)
@@ -29,9 +29,14 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 dnl Checks for library functions.
 
 dnl pkg-conf section
-PKG_CHECK_MODULES(PKGCONF, glib-2.0)
-AC_SUBST(PKGCONF_CFLAGS)
-AC_SUBST(PKGCONF_LIBS)
+AC_ARG_WITH([glib], AS_HELP_STRING([--without-glib], [Do not use glib-2.0]))
+
+AS_IF([test "x$with_glib" != "xno"], [
+   PKG_CHECK_MODULES(PKGCONF, glib-2.0)
+   AC_SUBST(PKGCONF_CFLAGS)
+   AC_SUBST(PKGCONF_LIBS)
+   AC_DEFINE([USE_GLIB], [1], [use glib-2.0])
+])
 
 dnl i18n makros.
 AM_GNU_GETTEXT([external])

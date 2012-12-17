@@ -25,7 +25,6 @@
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -208,6 +207,37 @@ out:
 	for (i = 0; i < nr; i++)
 		free (namelist [i]);
 	free (namelist);
+
+	return info;
+}
+
+/**
+ * find UIO devices by UIO name
+ * @param uio_name UIO name
+ * @returns device info or NULL on failure
+ */
+struct uio_info_t *uio_find_by_uio_name (char *uio_name)
+{
+	struct uio_info_t *info = NULL, **list, **uio_list;
+	char *name;
+
+	if (!uio_name)
+		return NULL;
+
+	uio_list = uio_find_devices ();
+	if (!uio_list)
+		return NULL;
+
+	for (list = uio_list; *list; list++)
+	{
+		info = *list;
+
+		name = uio_get_name (info);
+
+		if (!strcmp (name, uio_name))
+			break;
+	}
+	free (uio_list);
 
 	return info;
 }
