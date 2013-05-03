@@ -174,6 +174,7 @@ void *uio_get_bin_attr (struct uio_info_t* info, char *attr, size_t count)
 	}
 
 	value = malloc (count);
+	if (!value)
 	{
 		errno = ENOMEM;
 		g_warning (_("uio_get_bin_attr: %s\n"), g_strerror (errno));
