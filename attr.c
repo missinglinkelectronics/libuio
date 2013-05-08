@@ -52,6 +52,7 @@ char **uio_list_attr (struct uio_info_t* info)
 	struct dirent **namelist;
 	char **list;
 	int i, t = 0, nr;
+	char path[PATH_MAX];
 
 	if (!info)
 	{
@@ -60,7 +61,9 @@ char **uio_list_attr (struct uio_info_t* info)
 		return NULL;
 	}
 
-	nr = scandir (info->path, &namelist, 0, alphasort);
+	snprintf(path, PATH_MAX, "%s/attr/",info->path);
+
+	nr = scandir (path, &namelist, 0, alphasort);
 	if (nr < 0)
 	{
 		g_warning (_("scandir: %s"), g_strerror (errno));
@@ -109,7 +112,7 @@ char *uio_get_attr (struct uio_info_t* info, char *attr)
 		g_warning (_("uio_get_attr: %s\n"), g_strerror (EINVAL));
 		return NULL;
 	}
-	snprintf (filename, PATH_MAX, "%s/%s", info->path, attr);
+	snprintf (filename, PATH_MAX, "%s/attr/%s", info->path, attr);
 
 	return first_line_from_file (filename);
 }
@@ -132,7 +135,7 @@ int uio_set_attr (struct uio_info_t* info, char *attr, char *value)
 		g_warning (_("uio_set_attr: %s"), g_strerror (errno));
 		return -1;
 	}
-	snprintf (filename, PATH_MAX, "%s/%s", info->path, attr);
+	snprintf (filename, PATH_MAX, "%s/attr/%s", info->path, attr);
 
 	fd = open (filename, O_WRONLY);
 	if (fd < 0)
@@ -181,7 +184,7 @@ void *uio_get_bin_attr (struct uio_info_t* info, char *attr, size_t count)
 		return NULL;
 	}
 
-	snprintf (filename, PATH_MAX, "%s/%s", info->path, attr);
+	snprintf (filename, PATH_MAX, "%s/attr/%s", info->path, attr);
 
 	fd = open (filename, O_RDONLY);
 	if (fd < 0)
@@ -224,7 +227,7 @@ int uio_set_bin_attr (struct uio_info_t* info, char *attr,
 		g_warning (_("uio_set_attr: %s"), g_strerror (errno));
 		return -1;
 	}
-	snprintf (filename, PATH_MAX, "%s/%s", info->path, attr);
+	snprintf (filename, PATH_MAX, "%s/attr/%s", info->path, attr);
 
 	fd = open (filename, O_WRONLY);
 	if (fd < 0)
