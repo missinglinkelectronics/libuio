@@ -1,3 +1,11 @@
+libuio (0.2.5-1) UNRELEASED; urgency=low
+
+  * add some conviniant functions
+  * some bugfixes
+  * better handling of attributes
+
+ -- Benedikt Spranger <b.spranger@linutronix.de>  Wed, 15 May 2013 14:25:56 +0200
+
 libuio (0.2.4-1) unstable; urgency=low
 
   * add function uio_find_by_uio_name()
