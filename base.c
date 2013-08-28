@@ -146,6 +146,19 @@ dev_t uio_get_devid(struct uio_info_t* info)
 }
 
 /**
+ * get UIO device file descriptor
+ * @param info UIO device info struct
+ * @returns UIO device file descriptor -1 on failure
+ */
+int uio_get_fd(struct uio_info_t* info)
+{
+	if (!info)
+		return -1;
+
+	return info->fd;
+}
+
+/**
  * free UIO device information struct
  * @param info UIO device info struct
  */
