@@ -30,7 +30,7 @@ include_HEADERS = libuio.h
 # 4) If any interfaces have been removed or changed since the last public
 #    release, then set age to 0. 
 
-libuio_la_LDFLAGS = -version-info 3:0:1
+libuio_la_LDFLAGS = -version-info 4:0:2
 
 DEBIAN_FILES = debian/changelog debian/compat debian/control debian/copyright \
 	debian/docs debian/gbp.conf debian/libuio-dev.dirs \

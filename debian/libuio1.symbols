@@ -13,10 +13,13 @@ libuio.so.2 libuio1 #MINVER#
  uio_get_bin_attr@Base 0.2
  uio_get_devid@Base 0.2
  uio_get_devname@Base 0.2
+ uio_get_fd@Base 0.2
  uio_get_major@Base 0.2
+ uio_get_map_index_by_name@Base 0.2
  uio_get_maxmap@Base 0.2
  uio_get_mem_addr@Base 0.2
  uio_get_mem_map@Base 0.2
+ uio_get_mem_name@Base 0.2
  uio_get_mem_size@Base 0.2
  uio_get_minor@Base 0.2
  uio_get_name@Base 0.2
