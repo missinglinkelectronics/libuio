@@ -230,12 +230,14 @@ struct uio_info_t *uio_find_by_uio_name (char *uio_name)
 
 	for (list = uio_list; *list; list++)
 	{
-		info = *list;
+		struct uio_info_t *candidate = *list;
 
-		name = uio_get_name (info);
+		name = uio_get_name (candidate);
 
-		if (!strcmp (name, uio_name))
+		if (!strcmp (name, uio_name)) {
+			info = candidate;
 			break;
+		}
 	}
 	free (uio_list);
 
