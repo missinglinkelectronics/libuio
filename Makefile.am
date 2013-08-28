@@ -39,10 +39,10 @@ DEBIAN_FILES = debian/changelog debian/compat debian/control debian/copyright \
 	debian/lsuio.manpages debian/rules
 
 EXTRA_DIST = libuio.pc.in libuio-uninstalled.pc.in ChangeLog-from-git \
-	lsuio.texinfo $(DEBIAN_FILES)
+	lsuio.texi $(DEBIAN_FILES)
 
-info_TEXINFOS = lsuio.texinfo
-lsuio_TEXINFOS = lgpl21.texinfo
+info_TEXINFOS = lsuio.texi
+lsuio_TEXINFOS = lgpl21.texi
 
 man_MANS = lsuio.1
 

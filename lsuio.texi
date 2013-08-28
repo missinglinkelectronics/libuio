@@ -7,12 +7,12 @@
 @setchapternewpage odd
 @c %**end of header
 
-@set VERSION 0.2.0
+@set VERSION 0.2.6
 
 @ifinfo
 This file documents the @command{lsoio} command which lists all UIO devices.
 
-Copyright (C) 2011 Benedikt Spranger
+Copyright (C) 2011-2013 Benedikt Spranger
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -102,7 +102,7 @@ please review your X-drunk status!
 
 @node Copying, Overview, Instructions, Top
 @chapter Copying
-@include lgpl21.texinfo
+@include lgpl21.texi
 
 @node Overview, Sample, Copying, Top
 @chapter Overview
