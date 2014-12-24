@@ -142,7 +142,7 @@ int uio_get_map_index_by_name (struct uio_info_t* info, char *name)
 
 	for (i = 0; i < info->maxmap; i++)
 	{
-		if (!strcmp (name, info->name))
+		if (!strcmp (name, info->maps [i].name))
 		{
 			ret = i;
 			break;
