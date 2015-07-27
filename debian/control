@@ -1,7 +1,7 @@
 Source: libuio
 Priority: extra
 Maintainer: Benedikt Spranger <b.spranger@linutronix.de>
-Build-Depends: debhelper (>= 7.0.50~), autotools-dev
+Build-Depends: debhelper (>= 7.0.50~), dh-autoreconf, autotools-dev
 Standards-Version: 3.9.1
 Section: libs
 Vcs-Git: git://git.linutronix.de/projects/libUIO.git
