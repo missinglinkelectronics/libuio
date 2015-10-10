@@ -1,4 +1,4 @@
-libuio.so.2 libuio1 #MINVER#
+libuio.so.2 libuio2 #MINVER#
  create_uio_info@Base 0.2
  devid_from_file@Base 0.2
  first_line_from_file@Base 0.2

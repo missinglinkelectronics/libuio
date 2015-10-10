@@ -1,6 +1,6 @@
 SUBDIRS = po
 
-pkgconfigdir = $(libdir)/pkgconfig
+pkgconfigdir = $(datadir)/pkgconfig
 pkgconfig_DATA = libuio.pc
 
 bin_PROGRAMS = lsuio readuio
