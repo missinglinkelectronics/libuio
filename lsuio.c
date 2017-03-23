@@ -116,7 +116,7 @@ int main (int argc, char **argv)
 
 		g_print (_("Attr.  :\n"));
 		attr = uio_list_attr (info);
-		for (tmp = attr; *tmp; tmp++)
+		for (tmp = attr; tmp && *tmp; tmp++)
 		{
 			g_print (_("  %s\n"), *tmp);
 			if (want_verbose)
