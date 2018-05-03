@@ -1,3 +1,12 @@
+libuio (0.2.8) unstable; urgency=medium
+
+  * fix debianization and Makefile.am
+  * irq: fix timeout handling
+  * fix includes for use with newer glibc
+  * add error handling for mmap
+
+ -- Manuel Traut <manut@linutronix.de>  Thu, 03 May 2018 17:59:37 +0200
+
 libuio (0.2.7) unstable; urgency=medium
 
   * Fix initial package build
