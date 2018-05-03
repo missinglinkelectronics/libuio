@@ -103,11 +103,9 @@ int uio_irqwait_timeout (struct uio_info_t* info, struct timeval *timeout)
 		FD_SET (info->fd, &rfds);
 
 		ret = select (info->fd + 1, &rfds, NULL, NULL, timeout);
-		switch (ret)
-		{
-		case 0:
-			errno = ETIMEDOUT;
-		case -1:
+		if (ret < 1) {
+			if (ret == 0)
+				errno = ETIMEDOUT;
 			return -1;
 		}
 	}
