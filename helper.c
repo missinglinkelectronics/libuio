@@ -78,6 +78,7 @@ char *first_line_from_file (char *filename)
 		g_warning (_("read: %s"), g_strerror (errno));
 		free (out);
 		out = NULL;
+		goto out;
 	}
 
 	out [len] = 0;
