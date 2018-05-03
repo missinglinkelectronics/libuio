@@ -23,7 +23,6 @@ Multi-Arch: same
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends},
-	 libglib2.0-dev,
 	 texinfo,
 	 ${misc:Depends}
 Description: Userspace IO helper library
