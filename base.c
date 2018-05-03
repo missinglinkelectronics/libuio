@@ -295,6 +295,46 @@ struct uio_info_t *uio_find_by_uio_num (int uio_num)
 }
 
 /**
+ * find a UIO device by base address in memory map
+ * @param base address of a memory map member
+ * @returns device info or NULL on failure
+ */
+struct uio_info_t *uio_find_by_base_addr (unsigned int base_addr)
+{
+	struct uio_info_t *info = NULL, **list, **uio_list;
+	int mapc, mapnum, found = 0;
+
+	uio_list = uio_find_devices();
+	if (!uio_list)
+		return NULL;
+
+	for (list = uio_list; *list; list++)
+	{
+		struct uio_info_t *candidate = *list;
+
+		/* get number of maps and go through each checking the base address */
+		mapnum = uio_get_maxmap(candidate);
+
+		for (mapc = 0; mapc < mapnum; mapc++)
+		{
+			if (base_addr == uio_get_mem_addr(candidate, mapc))
+			{
+				info = candidate;
+				found = 1;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+	}
+
+	free (uio_list);
+
+	return info;
+}
+
+/**
  * open a UIO device (try to map to given address)
  * @param info UIO device info stuct
  * @param ptr try to map at ptr
