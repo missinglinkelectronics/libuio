@@ -58,6 +58,18 @@
 
 static const char *sysfs = "/sys";
 
+static int uio_unmap (struct uio_map_t *uio_map)
+{
+	int ret;
+	ret = munmap (uio_map->map, uio_map->size);
+	if (ret)
+		g_warning (_("munmap: %s\n"), g_strerror (errno));
+	else
+	        uio_map->map = MAP_FAILED;
+
+	return ret;
+}
+
 /**
  * Set sysfs mount point
  * @param sysfs_mpoint path to sysfs mount point
@@ -310,6 +322,12 @@ int uio_open_fix (struct uio_info_t* info, void *ptr)
 		info->maps [i].map = mmap (ptr, info->maps [i].size,
 					   PROT_READ | PROT_WRITE,
 					   MAP_SHARED, fd, i * getpagesize());
+		if (info->maps[i].map == MAP_FAILED) {
+			while (--i >= 0)
+				uio_unmap (info->maps [i].map);
+			g_warning (_("mmap: %s\n"), g_strerror (errno));
+			return -1;
+		}
 		if (ptr)
 			ptr += info->maps [i].size;
 	}
@@ -351,10 +369,19 @@ int uio_open_private (struct uio_info_t* info)
 		return -1;
 	}
 
-	for (i = 0; i < info->maxmap; i++)
+	for (i = 0; i < info->maxmap; i++) {
 		info->maps [i].map = mmap (NULL, info->maps [i].size,
 					   PROT_READ | PROT_WRITE,
 					   MAP_PRIVATE, fd, i * getpagesize());
+
+		if (info->maps[i].map == MAP_FAILED) {
+			while (--i >= 0)
+				uio_unmap(info->maps [i].map);
+			g_warning (_("mmap: %s\n"), g_strerror (errno));
+			return -1;
+		}
+	}
+
 	info->fd = fd;
 
 	return 0;
@@ -377,11 +404,8 @@ int uio_close (struct uio_info_t* info)
 	}
 
 	for (i = 0; i < info->maxmap; i++)
-	{
 		if (info->maps [i].map != MAP_FAILED)
-			munmap (info->maps [i].map, info->maps [i].size);
-		info->maps [i].map = MAP_FAILED;
-	}
+			uio_unmap(info->maps [i].map);
 
 	close (info->fd);
 
