@@ -33,6 +33,7 @@
 #include <sys/mman.h>
 #include <sys/select.h>
 #include <sys/stat.h>
+#include <sys/sysmacros.h>
 #include <sys/types.h>
 
 #include "libuio_internal.h"
