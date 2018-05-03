@@ -33,10 +33,10 @@ include_HEADERS = libuio.h
 libuio_la_LDFLAGS = -version-info 4:0:2
 
 DEBIAN_FILES = debian/changelog debian/compat debian/control debian/copyright \
-	debian/docs debian/gbp.conf debian/libuio-dev.dirs \
-	debian/libuio-dev.install debian/libuio1.dirs debian/libuio1.install \
-	debian/libuio1.symbols debian/lsuio.dirs debian/lsuio.install \
-	debian/lsuio.manpages debian/rules
+	debian/docs debian/gbp.conf debian/libuio-dev.install \
+	debian/libuio2.install debian/libuio2.symbols debian/lsuio.dirs \
+	debian/lsuio.install debian/lsuio.manpages debian/rules \
+	debian/source/format
 
 EXTRA_DIST = libuio.pc.in libuio-uninstalled.pc.in ChangeLog-from-git \
 	lsuio.texi $(DEBIAN_FILES)
