@@ -144,6 +144,8 @@ int main (int argc, char **argv)
 		}
 	}
 
+	free (uio_list);
+
 	return 0;
 }
 
