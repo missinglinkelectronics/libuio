@@ -40,7 +40,7 @@ by the Foundation.
 @title lsuio
 @subtitle list all UIO devices
 @subtitle for lsuio Version @value{VERSION}
-@author by Benedikt Spranger
+@author by Hans-Jürgen Koch, Benedikt Spranger
 
 @page
 @vskip 0pt plus 1filll
@@ -111,8 +111,6 @@ please review your X-drunk status!
 
 The @command{lsuio} lists all UIO Devices in a system.
 
-@command{lsuio} was written by Benedikt Spranger.
-
 @node Sample, Invoking lsuio, Overview, Top
 @chapter Sample Output
 @cindex sample
@@ -140,7 +138,7 @@ list uio devices.
       --usage                Give a short usage message
   -V, --version              Print program version
 
-Report bugs to <b.spranger@@linutronix.de>.
+Report bugs to https://github.com/linutronix/libuio/issues.
 @end example
 
 @node Invoking lsuio, Problems, Sample, Top
@@ -189,16 +187,11 @@ and then exit successfully.
 @cindex bugs
 @cindex problems
 
-If you find a bug in @command{lsuio}, please send electronic mail to
-@email{b.spranger@@linutronix.de}.  Include the version number, which
-you can find by running @w{@samp{lsuio --version}}. Also include in
-your message the output that the program produced and the output you
-expected.@refill
-
-If you have other questions, comments or suggestions about
-@command{lsuio}, contact the author via electronic mail to
-@email{b.spranger@@linutronix.de}. The author will try to help you out,
-although he may not have time to fix your problems.
+If you find a bug in @command{lsuio}, please report it on
+https://github.com/linutronix/libuio/issues.
+Include the version number, which you can find by running
+@w{@samp{lsuio --version}}. Also include in your report the output that the
+program produced and the output you expected.@refill
 
 @node Concept Index,  , Problems, Top
 @unnumbered Concept Index

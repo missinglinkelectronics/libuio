@@ -1,5 +1,5 @@
 dnl Every other copy of the package version number gets its value from here
-AC_INIT(libuio, 0.2.7, b.spranger@linutronix.de)
+AC_INIT(libuio, 0.2.7, https://github.com/linutronix/libuio/issues)
 AM_INIT_AUTOMAKE
 
 AM_CONFIG_HEADER(config.h)
