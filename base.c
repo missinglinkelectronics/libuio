@@ -286,9 +286,9 @@ struct uio_info_t *uio_find_by_uio_num (int uio_num)
  * @param base address of a memory map member
  * @returns device info or NULL on failure
  */
-struct uio_info_t *uio_find_by_base_addr (unsigned long base_addr)
+struct uio_info_t *uio_find_by_base_addr (unsigned int base_addr)
 {
-	struct uio_info_t *info = NULL, **list **uio_list;
+	struct uio_info_t *info = NULL, **list, **uio_list;
 	int mapc, mapnum, found = 0;
 	
 	uio_list = uio_find_devices();
