@@ -365,7 +365,7 @@ int uio_open_fix (struct uio_info_t* info, void *ptr)
 					   MAP_SHARED, fd, i * getpagesize());
 		if (info->maps[i].map == MAP_FAILED) {
 			while (--i >= 0)
-				uio_unmap (info->maps [i].map);
+				uio_unmap (&info->maps [i]);
 			g_warning (_("mmap: %s\n"), g_strerror (errno));
 			return -1;
 		}
@@ -417,7 +417,7 @@ int uio_open_private (struct uio_info_t* info)
 
 		if (info->maps[i].map == MAP_FAILED) {
 			while (--i >= 0)
-				uio_unmap(info->maps [i].map);
+				uio_unmap(&info->maps [i]);
 			g_warning (_("mmap: %s\n"), g_strerror (errno));
 			return -1;
 		}
@@ -446,7 +446,7 @@ int uio_close (struct uio_info_t* info)
 
 	for (i = 0; i < info->maxmap; i++)
 		if (info->maps [i].map != MAP_FAILED)
-			uio_unmap(info->maps [i].map);
+			uio_unmap(&info->maps [i]);
 
 	close (info->fd);
 
