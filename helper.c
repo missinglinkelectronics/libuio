@@ -128,6 +128,7 @@ static struct uio_map_t *scan_maps (char *dir, int *maxmap)
 	struct dirent **namelist;
 	char *tmp, name [PATH_MAX];
 	int nr, i, t = 0;
+	int spfret;
 
 	*maxmap = 0;
 	nr = scandir (dir, &namelist, 0, alphasort);
@@ -139,7 +140,7 @@ static struct uio_map_t *scan_maps (char *dir, int *maxmap)
 	{
 		errno = ENOMEM;
 		g_warning (_("calloc: %s"), g_strerror (errno));
-		goto out;
+		goto err_nomem1;
 	}
 
 	for (i = 0; i < nr; i++)
@@ -148,21 +149,31 @@ static struct uio_map_t *scan_maps (char *dir, int *maxmap)
 		    !strcmp (namelist [i]->d_name, ".."))
 		{
 			free (namelist [i]);
+			namelist [i] = NULL;
 			continue;
 		}
 
-		snprintf (name, sizeof (name), "%s/%s/addr",
-			  dir, namelist [i]->d_name);
+		spfret = snprintf (name, sizeof (name), "%s/%s/addr",
+		                   dir, namelist [i]->d_name);
+		if (spfret < 0 || spfret >= (int)sizeof (name))
+			goto err_inv_name;
+
 		tmp = first_line_from_file (name);
 		map [t].addr = strtoul (tmp, NULL, 0);
 		free (tmp);
 
-		snprintf (name, sizeof (name), "%s/%s/name",
-			  dir, namelist [i]->d_name);
+		spfret = snprintf (name, sizeof (name), "%s/%s/name",
+		                   dir, namelist [i]->d_name);
+		if (spfret < 0 || spfret >= (int)sizeof (name))
+			goto err_inv_name;
+
 		map [t].name = first_line_from_file (name);
 
-		snprintf (name, sizeof (name), "%s/%s/size",
-			  dir, namelist [i]->d_name);
+		spfret = snprintf (name, sizeof (name), "%s/%s/size",
+		                   dir, namelist [i]->d_name);
+		if (spfret < 0 || spfret >= (int)sizeof (name))
+			goto err_inv_name;
+
 		tmp = first_line_from_file (name);
 		map [t].size = strtoul (tmp, NULL, 0);
 		free (tmp);
@@ -172,10 +183,24 @@ static struct uio_map_t *scan_maps (char *dir, int *maxmap)
 		*maxmap = ++t;
 
 		free (namelist [i]);
+		namelist [i] = NULL;
 	}
-out:
 	free (namelist);
 	return map;
+
+err_inv_name:
+	g_warning (_("invalid name"));
+	free(map);
+err_nomem1:
+	for (i = 0; i < nr; i++)
+	{
+		if (namelist [i])
+		{
+			free (namelist [i]);
+		}
+	}
+	free (namelist);
+	return NULL;
 }
 
 /**
@@ -286,7 +311,15 @@ struct uio_info_t *create_uio_info (char *dir, char *name)
 
 	snprintf (filename, PATH_MAX, "%s/%s/maps", dir, name);
 	info->maps = scan_maps (filename, &info->maxmap);
-
+	if(info->maps == NULL)
+	{
+		free(info->path);
+		free(info->name);
+		free(info->version);
+		free(info->devname);
+		free(info);
+		return NULL;
+	}
 	info->fd = -1;
 
 	return info;
