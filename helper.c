@@ -311,15 +311,7 @@ struct uio_info_t *create_uio_info (char *dir, char *name)
 
 	snprintf (filename, PATH_MAX, "%s/%s/maps", dir, name);
 	info->maps = scan_maps (filename, &info->maxmap);
-	if(info->maps == NULL)
-	{
-		free(info->path);
-		free(info->name);
-		free(info->version);
-		free(info->devname);
-		free(info);
-		return NULL;
-	}
+
 	info->fd = -1;
 
 	return info;
