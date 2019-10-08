@@ -55,4 +55,5 @@ dnl last but not least
 AC_OUTPUT([Makefile
 	libuio.dox
 	libuio-uninstalled.pc
-	libuio.pc])
+	libuio.pc
+	po/Makefile.in])
