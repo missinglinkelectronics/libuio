@@ -53,7 +53,9 @@ AC_SUBST(LIBUIO_WERROR)
 
 dnl last but not least
 AC_OUTPUT([Makefile
-	libuio.dox
+	doc/Makefile
+	po/Makefile.in
+	src/Makefile
+	doc/libuio.dox
 	libuio-uninstalled.pc
-	libuio.pc
-	po/Makefile.in])
+	libuio.pc])
