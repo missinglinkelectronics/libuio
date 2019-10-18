@@ -1,11 +1,11 @@
-	libuio - UserspaceIO helper library
+	libuio-ng - Userspace I/O helper library
 
 
 
   Copyright (C) 2011 Benedikt Spranger
   based on libUIO by Hans J. Koch
 
-  libuio is free software; you can redistribute it and/or modify
+  libuio-ng is free software; you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License version 2.1
   as published by the Free Software Foundation.
 

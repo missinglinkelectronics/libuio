@@ -1,5 +1,5 @@
 dnl Every other copy of the package version number gets its value from here
-AC_INIT(libuio, 0.2.8, https://github.com/missinglinkelectronics/libuio/issues)
+AC_INIT(libuio-ng, 0.2.8, https://github.com/missinglinkelectronics/libuio-ng/issues)
 AC_CONFIG_MACRO_DIRS([m4])
 AM_INIT_AUTOMAKE
 

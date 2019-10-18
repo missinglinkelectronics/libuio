@@ -1,5 +1,5 @@
 /*
- * lsuio - libuio example application.
+ * lsuio - libuio-ng example application.
  *
  * Copyright (C) 2011 Benedikt Spranger
  *
