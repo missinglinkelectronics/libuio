@@ -64,7 +64,7 @@ static struct argp_option options [] =
 };
 
 /* The argp functions examine these global variables.  */
-const char *argp_program_bug_address = "https://github.com/linutronix/libuio/issues";
+const char *argp_program_bug_address = "https://github.com/missinglinkelectronics/libuio/issues";
 void (*argp_program_version_hook) (FILE *, struct argp_state *) = show_version;
 
 static struct argp argp =

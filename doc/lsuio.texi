@@ -138,7 +138,7 @@ list uio devices.
       --usage                Give a short usage message
   -V, --version              Print program version
 
-Report bugs to https://github.com/linutronix/libuio/issues.
+Report bugs to https://github.com/missinglinkelectronics/libuio/issues.
 @end example
 
 @node Invoking lsuio, Problems, Sample, Top
@@ -188,7 +188,7 @@ and then exit successfully.
 @cindex problems
 
 If you find a bug in @command{lsuio}, please report it on
-https://github.com/linutronix/libuio/issues.
+https://github.com/missinglinkelectronics/libuio/issues.
 Include the version number, which you can find by running
 @w{@samp{lsuio --version}}. Also include in your report the output that the
 program produced and the output you expected.@refill
