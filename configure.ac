@@ -1,5 +1,6 @@
 dnl Every other copy of the package version number gets its value from here
 AC_INIT(libuio, 0.2.8, https://github.com/linutronix/libuio/issues)
+AC_CONFIG_MACRO_DIRS([m4])
 AM_INIT_AUTOMAKE
 
 AM_CONFIG_HEADER(config.h)
@@ -42,6 +43,10 @@ dnl i18n makros.
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.17])
 
+dnl doxygen
+DX_DOXYGEN_FEATURE(ON)
+DX_INIT_DOXYGEN($PACKAGE_NAME, [Doxyfile] [doxygen-doc])
+
 dnl with or without -Werror
 AC_ARG_WITH([werror],
             [AS_HELP_STRING([--without-werror],
@@ -56,6 +61,6 @@ AC_OUTPUT([Makefile
 	doc/Makefile
 	po/Makefile.in
 	src/Makefile
-	doc/libuio.dox
+	Doxyfile
 	libuio-uninstalled.pc
 	libuio.pc])

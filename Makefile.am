@@ -22,5 +22,9 @@ MAINTAINERCLEANFILES = ABOUT-NLS aclocal.m4 compile config.guess config.h.in \
 
 ACLOCAL_AMFLAGS = -I m4
 
+# ax_doxygen
+@DX_RULES@
+MOSTLYCLEANFILES = $(DX_CLEANFILES)
+
 dist-hook:
 	$(top_srcdir)/ChangeLog-from-git $(top_srcdir)
