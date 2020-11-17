@@ -67,6 +67,9 @@ char **uio_list_attr (struct uio_info_t* info)
 	nr = scandir (path, &namelist, 0, alphasort);
 	if (nr < 0)
 	{
+		if (ENOENT == errno){
+			return NULL;
+		}
 		g_warning (_("scandir: %s"), g_strerror (errno));
 		return NULL;
 	}
