@@ -112,7 +112,6 @@ int main (int argc, char **argv)
 					uio_get_offset (info, i));
 			}
 		}
-		g_print (_("\n"));
 
 		g_print (_("Attr.  :\n"));
 		attr = uio_list_attr (info);
@@ -142,6 +141,7 @@ int main (int argc, char **argv)
 			else
 				g_print (_("failed\n"));
 		}
+		g_print (_("\n"));
 	}
 
 	free (uio_list);
