@@ -178,6 +178,8 @@ int uio_get_fd(struct uio_info_t* info)
  */
 void uio_free_info(struct uio_info_t* info)
 {
+	int i;
+
 	if (info)
 	{
 		if (info->path)
@@ -187,7 +189,14 @@ void uio_free_info(struct uio_info_t* info)
 		if (info->version)
 			free (info->version);
 		if (info->maps)
+		{
+			for (i = 0; i < info->maxmap; i++)
+			{
+				if (info->maps[i].name)
+					free(info->maps[i].name);
+			}
 			free (info->maps);
+		}
 		if (info->devname)
 			free (info->devname);
 		free (info);
