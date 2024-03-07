@@ -178,6 +178,8 @@ int uio_get_fd(struct uio_info_t* info)
  */
 void uio_free_info(struct uio_info_t* info)
 {
+	int i;
+
 	if (info)
 	{
 		if (info->path)
@@ -187,7 +189,14 @@ void uio_free_info(struct uio_info_t* info)
 		if (info->version)
 			free (info->version);
 		if (info->maps)
+		{
+			for (i = 0; i < info->maxmap; i++)
+			{
+				if (info->maps[i].name)
+					free(info->maps[i].name);
+			}
 			free (info->maps);
+		}
 		if (info->devname)
 			free (info->devname);
 		free (info);
@@ -261,11 +270,14 @@ struct uio_info_t *uio_find_by_uio_name (char *uio_name)
 
 		name = uio_get_name (candidate);
 
-		if (!strcmp (name, uio_name)) {
+		if ((!info) && (!strcmp (name, uio_name))) {
 			info = candidate;
-			break;
 		}
+		else
+			uio_free_info(candidate);
+
 	}
+
 	free (uio_list);
 
 	return info;
@@ -450,6 +462,8 @@ int uio_close (struct uio_info_t* info)
 			uio_unmap(&info->maps [i]);
 
 	close (info->fd);
+
+	uio_free_info(info);
 
 	return 0;
 }
