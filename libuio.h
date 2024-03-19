@@ -39,6 +39,7 @@ struct uio_info_t **uio_find_devices ();
 struct uio_info_t *uio_find_by_uio_name (char *uio_name);
 struct uio_info_t *uio_find_by_uio_num (int num);
 struct uio_info_t *uio_find_by_base_addr (unsigned int base_addr);
+void uio_free_info(struct uio_info_t* info);
 void uio_setsysfs_point (const char *sysfs_mpoint);
 char *uio_get_name (struct uio_info_t* info);
 char *uio_get_version (struct uio_info_t* info);
