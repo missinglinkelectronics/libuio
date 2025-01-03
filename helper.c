@@ -293,8 +293,10 @@ struct uio_info_t *create_uio_info (char *dir, char *name)
 	char filename [PATH_MAX];
 
 	info = calloc (1, sizeof (struct uio_info_t));
-	if (!info)
+	if (!info) {
+		g_warning (_("calloc: %s\n"), g_strerror (errno));
 		return NULL;
+	}
 
 	snprintf (filename, PATH_MAX, "%s/%s", dir, name);
 	info->path = strdup (filename);
