@@ -186,8 +186,14 @@ void uio_free_info(struct uio_info_t* info)
 			free (info->name);
 		if (info->version)
 			free (info->version);
-		if (info->maps)
-			free (info->maps);
+		if (info->maps) {
+			for (int i = 0; i < info->maxmap; i++) {
+				if (info->maps[i].name) {
+					free(info->maps[i].name);
+				}
+			}
+			free(info->maps);
+		}
 		if (info->devname)
 			free (info->devname);
 		free (info);
@@ -216,7 +222,6 @@ struct uio_info_t **uio_find_devices ()
 	info = calloc (nr, sizeof (struct uio_info_t *));
 	if (!info)
 	{
-		errno = ENOMEM;
 		g_warning (_("calloc: %s\n"), g_strerror (errno));
 		goto out;
 	}
@@ -263,7 +268,8 @@ struct uio_info_t *uio_find_by_uio_name (char *uio_name)
 
 		if (!strcmp (name, uio_name)) {
 			info = candidate;
-			break;
+		} else {
+			uio_free_info(candidate);
 		}
 	}
 	free (uio_list);

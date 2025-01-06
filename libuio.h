@@ -35,6 +35,7 @@ extern "C" {
 struct uio_info_t;
 
 /* base functions */
+void uio_free_info(struct uio_info_t* info);
 struct uio_info_t **uio_find_devices ();
 struct uio_info_t *uio_find_by_uio_name (char *uio_name);
 struct uio_info_t *uio_find_by_uio_num (int num);
