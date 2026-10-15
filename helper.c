@@ -178,7 +178,18 @@ static struct uio_map_t *scan_maps (char *dir, int *maxmap)
 		tmp = first_line_from_file (name);
 		map [t].size = strtoul (tmp, NULL, 0);
 		free (tmp);
-		map [t].offset = map [t].addr & (getpagesize () - 1);
+
+		tmp = first_line_from_file (name);
+		offset = 0;
+		if (tmp)
+		{
+			offset = strtoul (tmp, NULL, 0);
+			free (tmp);
+		}
+		if (offset == 0)
+			offset = map [t].addr & (getpagesize () - 1);
+		map [t].offset = offset;
+
 		map [t].map = MAP_FAILED;
 
 		*maxmap = ++t;
