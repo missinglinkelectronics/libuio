@@ -463,6 +463,8 @@ int uio_close (struct uio_info_t* info)
 
 	close (info->fd);
 
+	uio_free_info(info);
+
 	return 0;
 }
 
