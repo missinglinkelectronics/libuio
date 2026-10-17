@@ -1,0 +1,110 @@
+#
+# Assisted-by: LLM
+#
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      arm64:
+        description: Also run the slow arm64 VM test
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            autoconf automake autopoint gettext libtool pkg-config \
+            libglib2.0-dev texinfo texlive
+
+      - name: Build
+        run: ci/build.sh
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tarball
+          path: libuio-0.4.0.tar.gz
+
+  qemu:
+    needs: build
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        # arm64 only runs when requested for a manually started workflow
+        arch: ${{ fromJSON(inputs.arm64 && '["amd64", "arm64"]' || '["amd64"]') }}
+    # arm64 is emulated without KVM and takes much longer
+    timeout-minutes: ${{ matrix.arch == 'arm64' && 60 || 20 }}
+    env:
+      VM_ARCH: ${{ matrix.arch }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: tarball
+
+      - name: Enable KVM for the runner user
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Install VM dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libvirt-daemon-system libvirt-clients qemu-system-x86 \
+            qemu-system-arm qemu-utils ovmf qemu-efi-aarch64 xorriso
+
+      # Downloads the Debian cloud image and uses user-mode networking
+      - name: Run tests in VM
+        run: ci/vm-test.sh
+
+      - name: Clean up VM
+        if: always()
+        run: ci/vm-cleanup.sh
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: vm-test-results-${{ matrix.arch }}
+          path: |
+            report.xml
+            vm-test.log
+
+  debian-package:
+    needs: [build, qemu]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: tarball
+
+      - name: Install packaging tools and build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential dpkg-dev devscripts lintian fakeroot git \
+            debhelper pkgconf libglib2.0-dev texinfo
+
+      - name: Build Debian packages
+        run: ci/debian-package.sh
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: debian-packages
+          path: debian-packages/
