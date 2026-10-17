@@ -142,6 +142,8 @@ int main (int argc, char **argv)
 				g_print (_("failed\n"));
 		}
 		g_print (_("\n"));
+
+		uio_free_info (info);
 	}
 
 	free (uio_list);

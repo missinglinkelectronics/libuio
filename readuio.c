@@ -91,6 +91,7 @@ int main (int argc, char **argv)
 	}
 
 	uio_close (uio);
+	uio_free_info (uio);
 
 	return 0;
 }
