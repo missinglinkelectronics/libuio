@@ -1,0 +1,200 @@
+# The qemu jobs need a shell runner on a Linux x86-64 host with KVM, libvirt
+# (qemu:///session), qemu-system-aarch64, OVMF, AAVMF, qemu-img, xorriso, curl
+# and python3. The debian-package job needs the Debian packaging tools and the
+# package's build dependencies installed. The variables below can be overridden in the
+# project's CI/CD settings; see ci/README.md for details.
+#
+# Assisted-by: LLM
+#
+variables:
+  BUILD_RUNNER_TAG:
+    value: ""
+    description: >-
+      Runner tag for the build job. The job runs untagged if empty.
+  VM_RUNNER_TAG:
+    value: ""
+    description: >-
+      Runner tag for the qemu jobs. The jobs run untagged if empty.
+  VM_BASE_IMAGE_AMD64:
+    value: ""
+    description: >-
+      Path to a Debian 13 generic amd64 cloud image (qcow2) on the runner host.
+      Downloaded for every run if empty.
+  VM_BASE_IMAGE_ARM64:
+    value: ""
+    description: >-
+      Path to a Debian 13 generic arm64 cloud image (qcow2) on the runner host.
+      Downloaded for every run if empty.
+  VM_ARM64:
+    value: "manual"
+    options:
+      - "manual"
+      - "always"
+      - "never"
+    description: >-
+      Whether the slow arm64 VM test runs: "manual" adds it as manual job,
+      "always" runs it automatically, "never" leaves it out.
+  VM_NETWORK:
+    value: "user"
+    options:
+      - "user"
+      - "bridge"
+    description: >-
+      VM networking: "user" needs no host setup, "bridge" attaches the VM to
+      VM_BRIDGE.
+  VM_BRIDGE:
+    value: ""
+    description: >-
+      Host bridge for VM_NETWORK=bridge. Must be allowed for the runner user
+      in /etc/qemu/bridge.conf.
+  PACKAGE_RUNNER_TAG:
+    value: ""
+    description: >-
+      Runner tag for the debian-package job. The job runs untagged if empty.
+  DEBIAN_PACKAGING_URL:
+    value: "https://salsa.debian.org/debian/libuio.git"
+    description: >-
+      Git repository with the Debian packaging (debian/ directory).
+  DEBIAN_PACKAGING_REF:
+    value: "debian/unstable"
+    description: >-
+      Branch or tag of DEBIAN_PACKAGING_URL to use.
+
+stages:
+  - build
+  - qemu
+  - package
+
+.build:
+  stage: build
+  script:
+    - ci/build.sh
+  artifacts:
+    paths:
+      - libuio-0.4.0.tar.gz
+
+# Run the job without tags if BUILD_RUNNER_TAG is empty, and with
+# BUILD_RUNNER_TAG as tag otherwise
+build:
+  extends: .build
+  rules:
+    - if: $BUILD_RUNNER_TAG == null || $BUILD_RUNNER_TAG == ""
+
+build-tagged:
+  extends: .build
+  tags:
+    - $BUILD_RUNNER_TAG
+  rules:
+    - if: $BUILD_RUNNER_TAG
+
+# Only one job of each tagged/untagged pair exists in a pipeline, so the
+# following jobs need both as optional
+.qemu:
+  stage: qemu
+  needs:
+    - job: build
+      optional: true
+    - job: build-tagged
+      optional: true
+  # arm64 is emulated without KVM and is slow
+  timeout: 60m
+  # The VM name and its files in /dev/shm are fixed per architecture, so only
+  # one job per architecture may run at a time, e.g. for pushes to several
+  # branches. The amd64 and arm64 jobs can run in parallel.
+  resource_group: qemu-$VM_ARCH
+
+  script:
+    - ci/vm-test.sh
+
+  # Clean up any files we created
+  after_script:
+    - ci/vm-cleanup.sh
+
+  artifacts:
+    when: always
+    paths:
+      - vm-test.log
+    reports:
+      junit: report.xml
+
+.qemu-amd64:
+  extends: .qemu
+  variables:
+    VM_ARCH: amd64
+
+.qemu-arm64:
+  extends: .qemu
+  variables:
+    VM_ARCH: arm64
+
+# Run the jobs without tags if VM_RUNNER_TAG is empty, and with VM_RUNNER_TAG
+# as tag otherwise
+qemu-amd64:
+  extends: .qemu-amd64
+  rules:
+    - if: $VM_RUNNER_TAG == null || $VM_RUNNER_TAG == ""
+
+qemu-amd64-tagged:
+  extends: .qemu-amd64
+  tags:
+    - $VM_RUNNER_TAG
+  rules:
+    - if: $VM_RUNNER_TAG
+
+# arm64 runs depending on VM_ARM64. As manual job it does not block the
+# pipeline until it is started.
+qemu-arm64:
+  extends: .qemu-arm64
+  rules:
+    - if: $VM_RUNNER_TAG || $VM_ARM64 == "never"
+      when: never
+    - if: $VM_ARM64 == "always"
+    - when: manual
+      allow_failure: true
+
+qemu-arm64-tagged:
+  extends: .qemu-arm64
+  tags:
+    - $VM_RUNNER_TAG
+  rules:
+    - if: $VM_RUNNER_TAG == null || $VM_RUNNER_TAG == "" || $VM_ARM64 == "never"
+      when: never
+    - if: $VM_ARM64 == "always"
+    - when: manual
+      allow_failure: true
+
+# Runs after the amd64 VM test passed, using only the build artifacts. It does
+# not wait for the optional arm64 VM test.
+.debian-package:
+  stage: package
+  needs:
+    - job: build
+      optional: true
+    - job: build-tagged
+      optional: true
+    - job: qemu-amd64
+      optional: true
+      artifacts: false
+    - job: qemu-amd64-tagged
+      optional: true
+      artifacts: false
+  script:
+    - ci/debian-package.sh
+  artifacts:
+    when: always
+    paths:
+      - debian-packages/
+
+# Run the job without tags if PACKAGE_RUNNER_TAG is empty, and with
+# PACKAGE_RUNNER_TAG as tag otherwise
+debian-package:
+  extends: .debian-package
+  rules:
+    - if: $PACKAGE_RUNNER_TAG == null || $PACKAGE_RUNNER_TAG == ""
+
+debian-package-tagged:
+  extends: .debian-package
+  tags:
+    - $PACKAGE_RUNNER_TAG
+  rules:
+    - if: $PACKAGE_RUNNER_TAG

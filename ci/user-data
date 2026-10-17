@@ -1,0 +1,51 @@
+#cloud-config
+
+users:
+  - name: debian
+    plain_text_passwd: 'live'
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+
+chpasswd:
+  expire: false
+
+# Allow SSH login using the password (disabled by default in cloud images)
+ssh_pwauth: true
+
+# Install required packages non-interactively
+packages:
+  #  - openssh-server
+  - qemu-guest-agent
+  - build-essential
+  - autoconf
+  - automake
+  - libtool
+  - libglib2.0-dev
+  - pkg-config
+  - make
+  - gcc
+
+# Start services and run tests
+runcmd:
+  #  - systemctl enable --now ssh
+  - systemctl enable --now qemu-guest-agent
+  - |
+    # Redirect stdout and stderr to the virtio port logged on the host
+    exec > /dev/virtio-ports/org.libuio.ci.log 2>&1
+    set -x
+    : "=== CI TEST EXECUTION STARTED ==="
+
+    : "== test_mount: Mount CDROM with source code and tests =="
+    mount
+    lsblk
+    mount /dev/sr0 /media
+    if [ -e /media/libuio-0.4.0.tar.gz ] && [ -e /media/run-tests.sh ]; then
+      : "TEST: test_mount PASSED"
+      sh /media/run-tests.sh /media/tests
+    else
+      : "TEST: test_mount FAILED"
+    fi
+
+    : "=== CI TEST EXECUTION COMPLETED ==="
+    : "shutting down"
+    poweroff
