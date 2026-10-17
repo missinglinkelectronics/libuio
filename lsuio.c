@@ -76,7 +76,7 @@ static struct argp argp =
 
 int main (int argc, char **argv)
 {
-	struct uio_info_t **uio_list, *info;
+	struct uio_info_t **uio_list, **uio_list_iter, *info;
 	char **attr, **tmp;
 	int i;
 
@@ -90,9 +90,9 @@ int main (int argc, char **argv)
 		return 1;
 	}
 
-	for (;*uio_list; uio_list++)
+	for (uio_list_iter = uio_list; *uio_list_iter; uio_list_iter++)
 	{
-		info = *uio_list;
+		info = *uio_list_iter;
 		g_print (_("Name   : %s\n"), uio_get_name (info));
 		g_print (_("Version: %s\n"), uio_get_version (info));
 		g_print (_("DevId  : %d:%d\n"), uio_get_major (info),
