@@ -1,0 +1,24 @@
+libuio NEWS                                    -*- outline -*-
+
+* Noteworthy changes in release ?.?.? (????-??-??)
+
+** New features
+
+  libuio: Add uio_free_info() to the public API.
+
+** Bug fixes
+
+  Fix multiple memory leaks (thanks to Github's modbw)
+
+** Changes in behavior
+
+  libuio: If you already use the uio_free_info() function previously not
+  publically declared in the API header, and you manually free the info
+  struct map names, you need to stop doing so to avoid a double free.
+  Similarly, if you already use that function the info struct map names are
+  now correctly freed and you must not use them any more after freeing the
+  info struct.
+
+* Noteworthy changes in release 0.3.0 (2024-03-07)
+
+  Baseline. For earlier changes see the git history.
