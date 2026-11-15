@@ -328,7 +328,7 @@ struct uio_info_t *uio_find_by_base_addr (unsigned int base_addr)
 		/* get number of maps and go through each checking the base address */
 		mapnum = uio_get_maxmap(candidate);
 
-		for (mapc = 0; mapc < mapnum; mapc++)
+		for (mapc = 0; !found && mapc < mapnum; mapc++)
 		{
 			if (base_addr == uio_get_mem_addr(candidate, mapc))
 			{
@@ -338,8 +338,8 @@ struct uio_info_t *uio_find_by_base_addr (unsigned int base_addr)
 			}
 		}
 
-		if (found)
-			break;
+		if (candidate != info)
+			uio_free_info(candidate);
 	}
 
 	free (uio_list);
