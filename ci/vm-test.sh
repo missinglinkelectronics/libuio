@@ -40,7 +40,7 @@ arm64)
 esac
 
 VM_BASE_IMAGE_URL=https://cloud.debian.org/images/cloud/trixie/latest/debian-13-generic-$VM_ARCH.qcow2
-TARBALL=libuio-0.4.0.tar.gz
+TARBALL=libuio-$(ci/version.sh).tar.gz
 # VM name and prefix of its files in /dev/shm, as in ci/libvirt-$VM_ARCH.xml
 VM=ci-libuio-$VM_ARCH
 LOG=/dev/shm/$VM-test.log
@@ -80,7 +80,7 @@ xorriso -volid cidata -joliet on \
 	-outdev "stdio:/dev/shm/$VM-seed.iso" \
 	-map ci/user-data /user-data \
 	-map ci/meta-data /meta-data \
-	-map "$TARBALL" "/$TARBALL" \
+	-map "$TARBALL" /libuio.tar.gz \
 	-map ci/run-tests.sh /run-tests.sh \
 	-map ci/tests /tests
 if [ "$VM_NETWORK" = bridge ]; then

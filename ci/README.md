@@ -24,7 +24,8 @@ The pipeline has three stages:
 
 | File | Runs on | Purpose |
 | --- | --- | --- |
-| `build.sh` | host | Build libuio and create `libuio-0.4.0.tar.gz` (`make distcheck`) |
+| `build.sh` | host | Build libuio and create `libuio-<version>.tar.gz` (`make distcheck`) |
+| `version.sh` | host | Print `<version>` from `AC_INIT` in `configure.ac`, used to find the tarball |
 | `vm-test.sh` | host | Create and start the VM, wait for it, write `vm-test.log` and `report.xml` |
 | `vm-cleanup.sh` | host | Remove the VM and its temporary files; run it also after failures |
 | `log2junit.py` | host | Convert the VM log to a JUnit report (and a GitHub job summary) |
@@ -34,8 +35,9 @@ The pipeline has three stages:
 | `run-tests.sh` | VM | Run all `tests/*.sh` and print the results |
 | `tests/*.sh` | VM | The individual tests |
 
-The VM gets the source tarball, `run-tests.sh` and `tests/` on the cloud-init
-seed ISO. The tests write their output to the virtio-serial port
+The VM gets the source tarball (as `libuio.tar.gz`, independent of the
+version), `run-tests.sh` and `tests/` on the cloud-init seed ISO. The tests
+write their output to the virtio-serial port
 `/dev/virtio-ports/org.libuio.ci.log`, which is written to
 `/dev/shm/ci-libuio-<arch>-test.log` on the host. `vm-test.sh` turns it into
 the report after the VM powered off.
@@ -79,14 +81,13 @@ obtain Debian packages for installation.
 Please install packages from official sources.**
 
 The `debian-package` job takes the release tarball from the `build` job as
-upstream source (`libuio_0.4.0.orig.tar.gz`), adds the `debian/` directory
-from `DEBIAN_PACKAGING_URL`, and adds a changelog entry with version
-`0.4.0-0+ci1` by the author of the tested commit. If the Debian changelog
-already has a newer version for this upstream release (e.g. `0.4.0-1`),
-`+ci1` is appended to it instead (`0.4.0-1+ci1`), because `dch` refuses to
-go back in version. It then builds unsigned source
-and binary packages with `dpkg-buildpackage -us -uc` and checks them with
-lintian.
+upstream source (e.g. `libuio_0.4.0.orig.tar.gz`), adds the `debian/`
+directory from `DEBIAN_PACKAGING_URL`, and adds a changelog entry with version
+`<version>-0+ci1` (e.g. `0.4.0-0+ci1`) by the author of the tested commit. If
+the Debian changelog already has a newer version for this upstream release
+(e.g. `0.4.0-1`), `+ci1` is appended to it instead (`0.4.0-1+ci1`), because
+`dch` refuses to go back in version. It then builds unsigned source and binary
+packages with `dpkg-buildpackage -us -uc` and checks them with lintian.
 
 The job fails if
 

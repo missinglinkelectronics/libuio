@@ -71,7 +71,7 @@ stages:
     - ci/build.sh
   artifacts:
     paths:
-      - libuio-0.4.0.tar.gz
+      - libuio-*.tar.gz
 
 # Run the job without tags if BUILD_RUNNER_TAG is empty, and with
 # BUILD_RUNNER_TAG as tag otherwise

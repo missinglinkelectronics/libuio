@@ -32,7 +32,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: tarball
-          path: libuio-0.4.0.tar.gz
+          path: libuio-*.tar.gz
 
   qemu:
     needs: build

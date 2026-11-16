@@ -1,10 +1,10 @@
 # Install libuio and example applications
 # requires: test_build
-cd libuio-0.4.0
+cd libuio
 make install
 ldconfig
 # leave build directory
 cd
-rm -rf libuio-0.4.0
+rm -rf libuio
 # check correct installation of one example application
 lsuio --version

@@ -18,7 +18,7 @@ set -ex
 : "${DEBIAN_PACKAGING_REF:=debian/unstable}"
 
 NAME=libuio
-VERSION=0.4.0
+VERSION=$(ci/version.sh)
 TARBALL=$NAME-$VERSION.tar.gz
 OUT=debian-packages
 WORK=$(mktemp -d)

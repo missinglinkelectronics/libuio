@@ -15,7 +15,7 @@
 testdir=${1:?usage: $0 <testdir>}
 
 # Location of the source tarball, used by the build tests
-export SRC_TARBALL="${SRC_TARBALL:-/media/libuio-0.4.0.tar.gz}"
+export SRC_TARBALL="${SRC_TARBALL:-/media/libuio.tar.gz}"
 
 not_passed=""
 

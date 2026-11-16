@@ -39,7 +39,7 @@ runcmd:
     mount
     lsblk
     mount /dev/sr0 /media
-    if [ -e /media/libuio-0.4.0.tar.gz ] && [ -e /media/run-tests.sh ]; then
+    if [ -e /media/libuio.tar.gz ] && [ -e /media/run-tests.sh ]; then
       : "TEST: test_mount PASSED"
       sh /media/run-tests.sh /media/tests
     else

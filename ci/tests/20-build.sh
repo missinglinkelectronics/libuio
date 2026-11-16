@@ -1,7 +1,8 @@
 # Build libuio and example applications with default config
-rm -rf libuio-0.4.0
-tar xvf "$SRC_TARBALL"
-cd libuio-0.4.0
+rm -rf libuio
+mkdir libuio
+tar xvf "$SRC_TARBALL" -C libuio --strip-components=1
+cd libuio
 autoconf --version
 ./configure
 make
