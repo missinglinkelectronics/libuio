@@ -37,11 +37,19 @@ git clone --depth 1 --branch "$DEBIAN_PACKAGING_REF" \
 	"$DEBIAN_PACKAGING_URL" "$WORK/packaging"
 cp -r "$WORK/packaging/debian" "$SRC/"
 
-# Mark the package as CI build of this commit, by its author
+# Mark the package as CI build of this commit, by its author. The version must
+# be newer than the latest one in debian/changelog: if Debian already packages
+# this upstream version (e.g. 0.4.0-1), append +ci1 to the Debian revision.
 DESC=$(git describe --tags --always)
 export DEBFULLNAME="$(git log -1 --format=%an)"
 export DEBEMAIL="$(git log -1 --format=%ae)"
-(cd "$SRC" && dch --newversion "$VERSION-0+ci1" --distribution UNRELEASED \
+CURRENT=$(cd "$SRC" && dpkg-parsechangelog -S Version)
+if dpkg --compare-versions "$CURRENT" lt "$VERSION-0+ci1"; then
+	CI_VERSION=$VERSION-0+ci1
+else
+	CI_VERSION=$CURRENT+ci1
+fi
+(cd "$SRC" && dch --newversion "$CI_VERSION" --distribution UNRELEASED \
 	"CI build of upstream $DESC")
 
 # Build source and binary packages without signing. This fails if build

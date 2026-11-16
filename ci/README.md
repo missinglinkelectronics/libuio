@@ -81,7 +81,10 @@ Please install packages from official sources.**
 The `debian-package` job takes the release tarball from the `build` job as
 upstream source (`libuio_0.4.0.orig.tar.gz`), adds the `debian/` directory
 from `DEBIAN_PACKAGING_URL`, and adds a changelog entry with version
-`0.4.0-0+ci1` by the author of the tested commit. It then builds unsigned source
+`0.4.0-0+ci1` by the author of the tested commit. If the Debian changelog
+already has a newer version for this upstream release (e.g. `0.4.0-1`),
+`+ci1` is appended to it instead (`0.4.0-1+ci1`), because `dch` refuses to
+go back in version. It then builds unsigned source
 and binary packages with `dpkg-buildpackage -us -uc` and checks them with
 lintian.
 
