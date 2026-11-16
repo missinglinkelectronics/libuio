@@ -86,19 +86,28 @@ jobs:
   debian-package:
     needs: [build, qemu]
     runs-on: ubuntu-24.04
+    # The packaging from debian/unstable needs the build dependencies from
+    # unstable, e.g. a recent debhelper
+    container: debian:unstable
     steps:
+      # git must be installed before the checkout, or there is no .git for
+      # git describe
+      - name: Install packaging tools and build dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            build-essential dpkg-dev devscripts lintian fakeroot git \
+            ca-certificates debhelper pkgconf libglib2.0-dev texinfo
+
       - uses: actions/checkout@v7
+
+      # The workspace belongs to the runner user, not to root in the container
+      - name: Mark the workspace as safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - uses: actions/download-artifact@v8
         with:
           name: tarball
-
-      - name: Install packaging tools and build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            build-essential dpkg-dev devscripts lintian fakeroot git \
-            debhelper pkgconf libglib2.0-dev texinfo
 
       - name: Build Debian packages
         run: ci/debian-package.sh
