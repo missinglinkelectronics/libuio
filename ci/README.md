@@ -115,11 +115,24 @@ The `debian-package` job runs on any Debian or Ubuntu based runner with the
 packaging tools, git and the `Build-Depends` of the Debian packaging
 installed, and network access to `DEBIAN_PACKAGING_URL`. Nothing is
 installed by the job. The runner's distribution must be recent enough for
-the packaging, e.g. the current packaging needs `pkgconf`, not `pkg-config`.
-Use `PACKAGE_RUNNER_TAG` to select a suitable runner. For the current packaging:
+the packaging, e.g. the current packaging needs `pkgconf`, not `pkg-config`,
+and `debhelper-compat (= 14)`, i.e. debhelper 14.0 or newer. Debian 13
+(trixie) has debhelper 14 in `trixie-backports`; Debian testing and
+unstable and Ubuntu 26.10 have it in the release. Ubuntu 24.04 and 26.04 LTS
+are too old.
+Use `PACKAGE_RUNNER_TAG` to select a suitable runner. For the current packaging
+on Debian 13:
 
-    apt install dpkg-dev devscripts lintian fakeroot git \
-        debhelper pkgconf libglib2.0-dev texinfo
+    echo 'deb http://deb.debian.org/debian trixie-backports main' \
+        > /etc/apt/sources.list.d/backports.list
+    apt update
+    apt install dpkg-dev devscripts lintian fakeroot git ca-certificates \
+        pkgconf libglib2.0-dev texinfo
+    apt install -t trixie-backports debhelper
+
+The lintian of Debian 13 may warn about a `Standards-Version` newer than it
+knows; this does not fail the job. Install lintian from `trixie-backports`
+as well to avoid it.
 
 The VM test jobs need a **shell executor** runner on a Linux x86-64 host with:
 
@@ -186,7 +199,8 @@ the runner user, installs the packages listed above and runs the scripts with
 the default variables, i.e. it downloads the image and uses user-mode
 networking, and the Debian packaging is taken from salsa. It has the same
 three stages as jobs: `debian-package` runs after `build` and the `qemu` jobs
-passed.
+passed. As the debhelper of Ubuntu 24.04 and 26.04 is too old for the Debian
+packaging, `debian-package` runs in a `debian:unstable` container.
 On push and pull request, the `qemu` job only runs for amd64. To also run it
 for arm64, start the workflow with *Run workflow* in the *Actions* tab and
 select the arm64 checkbox. `debian-package` then also waits for arm64.
