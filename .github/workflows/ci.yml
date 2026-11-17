@@ -12,6 +12,10 @@ on:
         description: Also run the slow arm64 VM test
         type: boolean
         default: false
+      ppc64:
+        description: Also run the slow big-endian ppc64 VM test
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -40,10 +44,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # arm64 only runs when requested for a manually started workflow
-        arch: ${{ fromJSON(inputs.arm64 && '["amd64", "arm64"]' || '["amd64"]') }}
-    # arm64 is emulated without KVM and takes much longer
-    timeout-minutes: ${{ matrix.arch == 'arm64' && 60 || 20 }}
+        # arm64 and ppc64 only run when requested for a manually started
+        # workflow
+        arch: ${{ fromJSON(format('["amd64"{0}{1}]', inputs.arm64 && ', "arm64"' || '', inputs.ppc64 && ', "ppc64"' || '')) }}
+    # arm64 and ppc64 are emulated without KVM and take much longer, ppc64
+    # also builds its image first
+    timeout-minutes: ${{ matrix.arch == 'ppc64' && 120 || matrix.arch == 'arm64' && 60 || 20 }}
     env:
       VM_ARCH: ${{ matrix.arch }}
     steps:
@@ -65,9 +71,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             libvirt-daemon-system libvirt-clients qemu-system-x86 \
-            qemu-system-arm qemu-utils ovmf qemu-efi-aarch64 xorriso
+            qemu-system-arm qemu-system-ppc qemu-utils ovmf qemu-efi-aarch64 \
+            xorriso
 
-      # Downloads the Debian cloud image and uses user-mode networking
+      # There is no ppc64 image to download, and no place to keep one, so
+      # build it for every run
+      - name: Build ppc64 image
+        if: matrix.arch == 'ppc64'
+        run: |
+          ci/ppc64-image.sh "$RUNNER_TEMP/debian-sid-ppc64.qcow2"
+          echo "VM_BASE_IMAGE_PPC64=$RUNNER_TEMP/debian-sid-ppc64.qcow2" >> "$GITHUB_ENV"
+
+      # Downloads the Debian cloud image (except for ppc64) and uses user-mode
+      # networking
       - name: Run tests in VM
         run: ci/vm-test.sh
 
@@ -82,6 +98,7 @@ jobs:
           path: |
             report.xml
             vm-test.log
+            ppc64-image.log
 
   debian-package:
     needs: [build, qemu]

@@ -1,6 +1,7 @@
 # The qemu jobs need a shell runner on a Linux x86-64 host with KVM, libvirt
-# (qemu:///session), qemu-system-aarch64, OVMF, AAVMF, qemu-img, xorriso, curl
-# and python3. The debian-package job needs the Debian packaging tools and the
+# (qemu:///session), qemu-system-aarch64, qemu-system-ppc64, OVMF, AAVMF,
+# qemu-img, xorriso, curl and python3. The ppc64 job needs an image built with
+# ci/ppc64-image.sh on the runner host. The debian-package job needs the Debian packaging tools and the
 # package's build dependencies installed. The variables below can be overridden in the
 # project's CI/CD settings; see ci/README.md for details.
 #
@@ -25,6 +26,11 @@ variables:
     description: >-
       Path to a Debian 13 generic arm64 cloud image (qcow2) on the runner host.
       Downloaded for every run if empty.
+  VM_BASE_IMAGE_PPC64:
+    value: ""
+    description: >-
+      Path to the ppc64 image built with ci/ppc64-image.sh on the runner host.
+      Required for the ppc64 VM test.
   VM_ARM64:
     value: "manual"
     options:
@@ -34,6 +40,15 @@ variables:
     description: >-
       Whether the slow arm64 VM test runs: "manual" adds it as manual job,
       "always" runs it automatically, "never" leaves it out.
+  VM_PPC64:
+    value: "manual"
+    options:
+      - "manual"
+      - "always"
+      - "never"
+    description: >-
+      Whether the slow big-endian ppc64 VM test runs: "manual" adds it as
+      manual job, "always" runs it automatically, "never" leaves it out.
   VM_NETWORK:
     value: "user"
     options:
@@ -96,11 +111,11 @@ build-tagged:
       optional: true
     - job: build-tagged
       optional: true
-  # arm64 is emulated without KVM and is slow
+  # arm64 and ppc64 are emulated without KVM and are slow
   timeout: 60m
   # The VM name and its files in /dev/shm are fixed per architecture, so only
   # one job per architecture may run at a time, e.g. for pushes to several
-  # branches. The amd64 and arm64 jobs can run in parallel.
+  # branches. Jobs of different architectures can run in parallel.
   resource_group: qemu-$VM_ARCH
 
   script:
@@ -126,6 +141,11 @@ build-tagged:
   extends: .qemu
   variables:
     VM_ARCH: arm64
+
+.qemu-ppc64:
+  extends: .qemu
+  variables:
+    VM_ARCH: ppc64
 
 # Run the jobs without tags if VM_RUNNER_TAG is empty, and with VM_RUNNER_TAG
 # as tag otherwise
@@ -163,8 +183,29 @@ qemu-arm64-tagged:
     - when: manual
       allow_failure: true
 
+# ppc64 runs depending on VM_PPC64, like arm64
+qemu-ppc64:
+  extends: .qemu-ppc64
+  rules:
+    - if: $VM_RUNNER_TAG || $VM_PPC64 == "never"
+      when: never
+    - if: $VM_PPC64 == "always"
+    - when: manual
+      allow_failure: true
+
+qemu-ppc64-tagged:
+  extends: .qemu-ppc64
+  tags:
+    - $VM_RUNNER_TAG
+  rules:
+    - if: $VM_RUNNER_TAG == null || $VM_RUNNER_TAG == "" || $VM_PPC64 == "never"
+      when: never
+    - if: $VM_PPC64 == "always"
+    - when: manual
+      allow_failure: true
+
 # Runs after the amd64 VM test passed, using only the build artifacts. It does
-# not wait for the optional arm64 VM test.
+# not wait for the optional arm64 and ppc64 VM tests.
 .debian-package:
   stage: package
   needs:

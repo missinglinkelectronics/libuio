@@ -1,0 +1,21 @@
+#cloud-config
+# cloud-init configuration of the amd64 builder VM of ci/ppc64-image.sh
+
+packages:
+  - mmdebstrap
+  - qemu-user-binfmt
+  - debian-ports-archive-keyring
+  - fdisk
+
+runcmd:
+  - |
+    # Redirect stdout and stderr to the virtio port logged on the host
+    exec > /dev/virtio-ports/org.libuio.ci.log 2>&1
+    set -x
+    mount /dev/sr0 /media
+    if sh /media/build.sh /dev/vdb; then
+      : "=== IMAGE BUILD SUCCEEDED ==="
+    else
+      : "=== IMAGE BUILD FAILED ==="
+    fi
+    poweroff

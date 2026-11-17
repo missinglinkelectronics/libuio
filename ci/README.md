@@ -1,10 +1,10 @@
 # libuio CI
 
-The CI builds libuio, then boots Debian 13 VMs with two QEMU `edu` PCI devices
+The CI builds libuio, then boots Debian VMs with two QEMU `edu` PCI devices
 and runs integration tests in it against real UIO devices.
-The VM test run for amd64 (with KVM) and arm64 (emulated by QEMU without KVM,
-as the current CI hosts are x86-64). As the emulated arm64 test is slow, it
-only runs on request by default.
+The VM test run for amd64 (with KVM), arm64 and big-endian ppc64 (both
+emulated by QEMU without KVM, as the current CI hosts are x86-64). As the
+emulated tests are slow, they only run on request by default.
 The same scripts are used by GitLab CI (`.gitlab-ci.yml`) and GitHub Actions
 (`.github/workflows/ci.yml`), and can also be run locally.
 
@@ -30,7 +30,9 @@ The pipeline has three stages:
 | `vm-cleanup.sh` | host | Remove the VM and its temporary files; run it also after failures |
 | `log2junit.py` | host | Convert the VM log to a JUnit report (and a GitHub job summary) |
 | `debian-package.sh` | host | Build and lintian-check Debian packages |
-| `libvirt-amd64.xml`, `libvirt-arm64.xml` | host | libvirt domain definitions of the VM per architecture |
+| `libvirt-amd64.xml`, `libvirt-arm64.xml`, `libvirt-ppc64.xml` | host | libvirt domain definitions of the VM per architecture |
+| `ppc64-image.sh` | host | Build the ppc64 cloud image, see [ppc64 big-endian image](#ppc64-big-endian-image) |
+| `ppc64-image/user-data`, `ppc64-image/build.sh` | builder VM | cloud-init configuration and script of the VM building the ppc64 image |
 | `user-data`, `meta-data` | VM | cloud-init configuration: installs packages and starts `run-tests.sh` |
 | `run-tests.sh` | VM | Run all `tests/*.sh` and print the results |
 | `tests/*.sh` | VM | The individual tests |
@@ -47,6 +49,12 @@ machine `virt` instead of q35, an emulated Cortex-A57 CPU, GICv3, the seed
 ISO on virtio-scsi instead of SATA and a PL011 serial console. The `edu`
 devices are attached the same way to the PCIe root bus.
 
+The ppc64 domain tests on a 64-bit big-endian architecture. It uses the
+emulated `pseries` machine with a POWER9 CPU and the SLOF firmware, the seed
+ISO on virtio-scsi and the hypervisor console `hvc0`. pseries has a
+conventional PCI host bridge, so all devices including the `edu` devices are
+on bus `pci.0`.
+
 ## Variables
 
 `vm-test.sh` is configured with environment variables. In GitLab they are
@@ -56,12 +64,14 @@ running a pipeline manually.
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `VM_ARCH` | `amd64` | Architecture of the VM, `amd64` or `arm64`. Set by the CI jobs for each architecture. |
+| `VM_ARCH` | `amd64` | Architecture of the VM, `amd64`, `arm64` or `ppc64`. Set by the CI jobs for each architecture. |
 | `VM_BASE_IMAGE_AMD64`, `VM_BASE_IMAGE_ARM64` | empty | Path to a [Debian 13 generic cloud image](https://cloud.debian.org/images/cloud/trixie/latest/) (`debian-13-generic-amd64.qcow2`, `debian-13-generic-arm64.qcow2`) for `VM_ARCH` on the runner host. It is only used read-only as backing file. If empty, the image (about 400 MB) is downloaded for every run. |
+| `VM_BASE_IMAGE_PPC64` | empty | Path to the ppc64 image built with `ppc64-image.sh` on the runner host, used read-only as backing file. Required for `VM_ARCH=ppc64`. |
 | `VM_NETWORK` | `user` | `user` for QEMU user-mode networking, which needs no host setup. `bridge` to attach the VM to the host bridge `VM_BRIDGE`. |
 | `VM_BRIDGE` | empty | Host bridge for `VM_NETWORK=bridge`, see [Bridge networking](#bridge-networking). |
-| `VM_RUNNER_TAG` | empty | GitLab only: runner tag for the VM test jobs. If empty, the jobs `qemu-amd64` and `qemu-arm64` run untagged; otherwise the jobs `qemu-amd64-tagged` and `qemu-arm64-tagged` run with this tag. |
+| `VM_RUNNER_TAG` | empty | GitLab only: runner tag for the VM test jobs. If empty, the jobs `qemu-amd64`, `qemu-arm64` and `qemu-ppc64` run untagged; otherwise the jobs `qemu-amd64-tagged`, `qemu-arm64-tagged` and `qemu-ppc64-tagged` run with this tag. |
 | `VM_ARM64` | `manual` | GitLab only: `manual` adds the arm64 VM test as manual job, which is started with its play button in the pipeline and does not block the pipeline otherwise. `always` runs it automatically, `never` leaves it out. |
+| `VM_PPC64` | `manual` | GitLab only: the same for the ppc64 VM test. It needs `VM_BASE_IMAGE_PPC64`. |
 
 The VM needs network access to install its packages, which works with either
 network mode.
@@ -141,28 +151,33 @@ The VM test jobs need a **shell executor** runner on a Linux x86-64 host with:
 - libvirt with the QEMU driver; the job uses the unprivileged
   `qemu:///session` connection of the runner user, so no libvirt permissions
   are needed
-- QEMU for x86-64 and aarch64, UEFI firmware for both (OVMF, AAVMF),
-  qemu-img, xorriso, curl and python3
+- QEMU for x86-64, aarch64 and ppc64, UEFI firmware for x86-64 and aarch64
+  (OVMF, AAVMF), qemu-img, xorriso, curl and python3
+- for the ppc64 test, an image built with `ppc64-image.sh` (see
+  [ppc64 big-endian image](#ppc64-big-endian-image)) and `VM_BASE_IMAGE_PPC64`
+  set to it
 
 On Debian or Ubuntu:
 
     apt install libvirt-daemon-system libvirt-clients qemu-system-x86 \
-        qemu-system-arm qemu-utils ovmf qemu-efi-aarch64 xorriso curl python3
+        qemu-system-arm qemu-system-ppc qemu-utils ovmf qemu-efi-aarch64 \
+        xorriso curl python3
     adduser gitlab-runner kvm
 
 Each VM uses about 1 GB of RAM. The disk overlay, seed ISO, log and (if
 downloaded) the base image are kept in `/dev/shm`, so the host needs some
 free space there per VM: a few hundred MB for the overlay, plus about 400 MB
 if the base image is downloaded.
-The arm64 VM is emulated and thus much slower than the amd64 one.
+The arm64 and ppc64 VMs are emulated and thus much slower than the amd64 one.
 
 Only **one VM test job per architecture may run at a time per host**,
 as the VM name (`ci-libuio-<arch>`) and the files in `/dev/shm` are fixed
 per architecture. Within the project, GitLab ensures this with the resource
-groups `qemu-amd64` and `qemu-arm64`: the amd64 and arm64 jobs run in
-parallel, while jobs of the same architecture, e.g. from pushes to several
-branches, wait for each other. To run both architectures at the same time,
-the runner needs at least `limit = 2` in its `config.toml` section. If the
+groups `qemu-amd64`, `qemu-arm64` and `qemu-ppc64`: jobs of different
+architectures run in parallel, while jobs of the same architecture, e.g. from
+pushes to several branches, wait for each other. To run all architectures at
+the same time, the runner needs at least `limit = 3` in its `config.toml`
+section. If the
 runner user also runs VM test jobs of other projects (e.g. forks), which the
 resource groups do not cover, use `limit = 1` or a runner with
 `concurrent = 1` instead.
@@ -189,6 +204,7 @@ A site with a local copy of the image, a bridge `br0` and a runner tagged
     VM_RUNNER_TAG       = kvm
     VM_BASE_IMAGE_AMD64 = /srv/images/debian-13-generic-amd64.qcow2
     VM_BASE_IMAGE_ARM64 = /srv/images/debian-13-generic-arm64.qcow2
+    VM_BASE_IMAGE_PPC64 = /srv/images/debian-sid-ppc64.qcow2
     VM_NETWORK          = bridge
     VM_BRIDGE           = br0
 
@@ -202,8 +218,13 @@ three stages as jobs: `debian-package` runs after `build` and the `qemu` jobs
 passed. As the debhelper of Ubuntu 24.04 and 26.04 is too old for the Debian
 packaging, `debian-package` runs in a `debian:unstable` container.
 On push and pull request, the `qemu` job only runs for amd64. To also run it
-for arm64, start the workflow with *Run workflow* in the *Actions* tab and
-select the arm64 checkbox. `debian-package` then also waits for arm64.
+for arm64 or ppc64, start the workflow with *Run workflow* in the *Actions*
+tab and select the arm64 or ppc64 checkbox. `debian-package` then also waits
+for these.
+As there is no place to keep the ppc64 image, the ppc64 job builds it with
+`ppc64-image.sh` before the test, which makes the job take longer and fail
+whenever Debian ports unstable is not installable. Its `ppc64-image.log` is
+kept with the test results.
 No setup is needed.
 
 ## Running locally
@@ -218,6 +239,47 @@ On a host prepared like a GitLab runner, from the top of the source tree:
 Set the variables as needed, e.g.
 `VM_BASE_IMAGE_AMD64=/path/to/debian-13-generic-amd64.qcow2 ci/vm-test.sh`.
 For arm64, set `VM_ARCH=arm64` for both `vm-test.sh` and `vm-cleanup.sh`.
+
+## ppc64 big-endian image
+
+Debian has no ppc64 (64-bit big-endian PowerPC) release and no cloud image
+for it, only the unofficial [Debian ports](https://www.ports.debian.org/)
+unstable. `ppc64-image.sh` builds a cloud image from it, using the same
+methodology as the tests: it boots a Debian 13 amd64 cloud image as builder
+VM with KVM, derived from `libvirt-amd64.xml`, with an additional empty raw
+disk. cloud-init in the builder VM installs `mmdebstrap` and
+`qemu-user-binfmt` and runs `ppc64-image/build.sh`, which
+
+- partitions the disk with an MBR: a PReP boot partition and the ext4 root
+  file system,
+- installs Debian ports unstable with the kernel, cloud-init, systemd-networkd
+  and some basics with `mmdebstrap --arch=ppc64` (ppc64 programs are run by
+  qemu-user),
+- writes a GRUB core image (`grub-mkimage`) to the PReP partition, from where
+  SLOF boots it. GRUB loads `/boot/grub/grub.cfg`, which boots
+  `/boot/vmlinux` and `/boot/initrd.img`.
+
+The builder log is written to `ppc64-image.log`, and the disk is converted to
+the compressed qcow2 given as argument. The host needs nothing beyond the VM
+test requirements (in particular no root access), and the build takes about
+10 minutes. As with `vm-test.sh`, `VM_BASE_IMAGE_AMD64` avoids downloading
+the builder image:
+
+    VM_BASE_IMAGE_AMD64=/srv/images/debian-13-generic-amd64.qcow2 \
+        ci/ppc64-image.sh /srv/images/debian-sid-ppc64.qcow2
+
+Debian ports unstable changes all the time and is not always installable, so
+the image is not built for every test run: build it once, keep it on the
+runner host and set `VM_BASE_IMAGE_PPC64` to it. Rebuild it when needed, e.g.
+when installing the test dependencies with cloud-init fails because the
+image got too old. Only one image build may run at a time per host.
+
+Then run the test like for the other architectures, which takes about 10
+minutes, as ppc64 is emulated without KVM:
+
+    VM_ARCH=ppc64 VM_BASE_IMAGE_PPC64=/srv/images/debian-sid-ppc64.qcow2 \
+        ci/vm-test.sh
+    VM_ARCH=ppc64 ci/vm-cleanup.sh
 
 ## Adding tests
 

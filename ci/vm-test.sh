@@ -7,12 +7,17 @@
 # Writes report.xml and vm-test.log to the current directory.
 #
 # Environment:
-#   VM_ARCH        Architecture of the VM: "amd64" (default) or "arm64". arm64
-#                  is emulated without KVM and therefore much slower.
+#   VM_ARCH        Architecture of the VM: "amd64" (default), "arm64" or
+#                  "ppc64" (big-endian). arm64 and ppc64 are emulated without
+#                  KVM and therefore much slower.
 #   VM_BASE_IMAGE_AMD64, VM_BASE_IMAGE_ARM64
 #                  Debian 13 generic cloud image (qcow2) for VM_ARCH on this
 #                  host, used read-only as backing file. Downloaded for every
 #                  run if empty.
+#   VM_BASE_IMAGE_PPC64
+#                  Debian ports cloud image (qcow2) built with
+#                  ci/ppc64-image.sh, used read-only as backing file. Required
+#                  for VM_ARCH=ppc64, as there is no image to download.
 #   VM_NETWORK     "user" (default) for QEMU user-mode networking, which needs
 #                  no host setup, or "bridge" to attach the VM to VM_BRIDGE
 #   VM_BRIDGE      Host bridge for VM_NETWORK=bridge. The user running the
@@ -23,6 +28,7 @@ set -ex
 : "${VM_ARCH:=amd64}"
 : "${VM_BASE_IMAGE_AMD64:=}"
 : "${VM_BASE_IMAGE_ARM64:=}"
+: "${VM_BASE_IMAGE_PPC64:=}"
 : "${VM_NETWORK:=user}"
 : "${VM_BRIDGE:=}"
 
@@ -32,6 +38,13 @@ amd64)
 	;;
 arm64)
 	VM_BASE_IMAGE=$VM_BASE_IMAGE_ARM64
+	;;
+ppc64)
+	VM_BASE_IMAGE=$VM_BASE_IMAGE_PPC64
+	if [ -z "$VM_BASE_IMAGE" ]; then
+		echo "VM_ARCH=ppc64 needs VM_BASE_IMAGE_PPC64, build it with ci/ppc64-image.sh" >&2
+		exit 1
+	fi
 	;;
 *)
 	echo "unknown VM_ARCH: $VM_ARCH" >&2
